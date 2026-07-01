@@ -16,7 +16,7 @@ class RegisterUserCommandHandler:
 
     async def handle(self, cmd: RegisterUserCommand) -> User:
         is_admin = False
-        if cmd.admin_code and cmd.admin_code == settings.ADMIN_REGISTRATION_CODE:
+        if cmd.admin_code and cmd.admin_code == settings.admin_registration_code:
             is_admin = True
 
         email = Email(cmd.email)

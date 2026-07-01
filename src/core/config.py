@@ -2,7 +2,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    ADMIN_REGISTRATION_CODE: str
 
     app_name: str = "coffe_house"
     app_env: str = "local"
@@ -19,6 +18,7 @@ class Settings(BaseSettings):
     auth_cookie_samesite: str = "lax"
     auth_cookie_path: str = "/"
     
+    admin_registration_code: str
     
     postgres_host: str
     postgres_port: str

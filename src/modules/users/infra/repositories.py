@@ -41,7 +41,7 @@ class SQLAlchemyUserRepository(UserRepository):
             name=user.name.value,
             email=user.email.value,
             password_hash=user.password_hash,
-            role=user.role.value,
+            is_admin=user.is_admin,
         )
         self.session.add(user_model)
         
@@ -61,7 +61,7 @@ class SQLAlchemyUserReadRepository(UserReadRepository):
         self.session = session
     
     async def get_by_id(self, id: UUID) -> UserReadModel | None:
-        stmt = select(UserModel.id, UserModel.name, UserModel.email, UserModel.role).where(UserModel.id == id)
+        stmt = select(UserModel.id, UserModel.name, UserModel.email, UserModel.is_admin).where(UserModel.id == id)
         result = await self.session.execute(stmt)
         user_model = result.one_or_none()
         
@@ -72,5 +72,5 @@ class SQLAlchemyUserReadRepository(UserReadRepository):
             id=user_model.id,
             name=user_model.name,
             email=user_model.email,
-            role=user_model.role,
+            is_admin=user_model.is_admin,
         )
