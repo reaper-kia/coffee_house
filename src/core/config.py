@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    ADMIN_REGISTRATION_CODE: str
+
     app_name: str = "coffe_house"
     app_env: str = "local"
     app_debug: bool = True
