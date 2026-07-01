@@ -54,7 +54,9 @@ class SQLAlchemyUserRepository(UserRepository):
             name=UserName(user_model.name),
             email=Email(user_model.email),
             password_hash=user_model.password_hash,
+            is_admin=user_model.is_admin,
         )
+                
 
 class SQLAlchemyUserReadRepository(UserReadRepository):
     def __init__(self, session: AsyncSession):

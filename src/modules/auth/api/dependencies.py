@@ -22,6 +22,7 @@ from src.shared.infra.database.session import get_async_session
 @dataclass(frozen=True)
 class CurrentUser:
     id: UUID
+    is_admin: bool
 
 
 def get_auth_user_repository(
@@ -88,8 +89,9 @@ async def get_current_user(
         )
     
     return CurrentUser(
-        id=user.id,
-    )
+    id=user.id,
+    is_admin=user.is_admin,
+)
 
 async def require_admin(
     current_user: CurrentUser = Depends(get_current_user),

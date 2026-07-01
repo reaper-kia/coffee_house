@@ -35,8 +35,7 @@ shell:
 	docker compose exec app bash
 
 db-shell:
-	docker compose exec db psql -U marketplace -d marketplace
-
+	docker compose exec db psql -U coffee_house -d coffee_house
 test:
 	docker compose exec app pytest
 

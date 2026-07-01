@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from pydantic import EmailStr 
 
 @dataclass(frozen=True)
 class AuthUserReadModel:
     id: UUID
-    email: EmailStr
+    email: str
     password_hash: str
