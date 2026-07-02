@@ -1,0 +1,1 @@
+export const AdminRequestsPage = () => <h1 style={{ padding: 20 }}>📋 Заявки</h1>;

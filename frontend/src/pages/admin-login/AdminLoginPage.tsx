@@ -1,0 +1,1 @@
+export const AdminLoginPage = () => <h1 style={{ padding: 20 }}>🔐 Вход в админку</h1>;

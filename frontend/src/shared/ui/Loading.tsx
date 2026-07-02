@@ -1,0 +1,1 @@
+export const Loading = () => <p style={{ textAlign: 'center', padding: '20px' }}> Загрузка...</p>;
