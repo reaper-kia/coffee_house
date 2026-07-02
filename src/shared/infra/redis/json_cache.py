@@ -38,7 +38,7 @@ class RedisJsonCache(JsonCache):
         redis_key = self._redis_key(key)
         
         try:
-            raw_value = await json.dumps(value)
+            raw_value = json.dumps(value)
             await self.redis.set(
                 redis_key,
                 raw_value,

@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 # Импорт роутеров модулей
 from src.modules.users.api.router import router as users_router
 from src.modules.auth.api.router import router as auth_router
+from src.modules.admin.api.router import router as admin_router
 
 from src.shared.infra.database.health import check_database_connection
 from src.shared.infra.database.session import get_async_session
@@ -18,10 +19,6 @@ from src.shared.infra.redis.health import check_redis_connection
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """
-    Управление жизненным циклом приложения:
-    закрываем соединение с Redis при завершении.
-    """
     yield
     await close_redis_client()
 
@@ -32,11 +29,11 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # Подключение роутеров модулей
     app.include_router(users_router)
     app.include_router(auth_router)
+    app.include_router(admin_router)
 
-    # Health checks
+
     @app.get("/health")
     async def health_check() -> dict[str, str]:
         return {"status": "success"}
@@ -58,5 +55,4 @@ def create_app() -> FastAPI:
     return app
 
 
-# Создаём экземпляр приложения для запуска через uvicorn
 app = create_app()
