@@ -63,7 +63,8 @@ export const PreorderForm = () => {
       try {
         await customerRequestApi.createPreorder(values);
         navigate('/success');
-      } catch (err) {
+      } catch (error) {
+        console.error('Ошибка при создании предзаказа:', error);
         alert('Ошибка при создании предзаказа.');
       } finally {
         setIsSubmitting(false);

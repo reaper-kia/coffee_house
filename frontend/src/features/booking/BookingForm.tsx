@@ -35,7 +35,8 @@ export const BookingForm = () => {
       try {
         await customerRequestApi.createBooking(values);
         navigate('/success');
-      } catch (err) {
+      } catch (error) {
+        console.error('Ошибка при бронировании:', error);
         alert('Ошибка при бронировании. Попробуйте позже.');
       } finally {
         setIsSubmitting(false);

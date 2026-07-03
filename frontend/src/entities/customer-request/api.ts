@@ -1,5 +1,9 @@
 import type { CustomerRequest, CreateBookingDto, CreatePreorderDto } from './types';
 
+// ============================================
+// TEMPORARY MOCK API
+// ============================================
+
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // хранилище заявок в памяти(мок)
