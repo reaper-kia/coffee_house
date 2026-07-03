@@ -7,7 +7,7 @@ export const HomePage = () => (
       <Link to="/menu">Меню</Link>
       <Link to="/booking">Бронь столика</Link>
       <Link to="/preorder">Предзаказ</Link>
-      <Link to="/admin/login">Админка</Link>
+      <Link to="/admin/requests">Админка</Link>
     </nav>
   </div>
 );

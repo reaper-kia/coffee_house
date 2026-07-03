@@ -5,7 +5,7 @@ import { BookingPage } from '../pages/booking/BookingPage';
 import { PreorderPage } from '../pages/preorder/PreorderPage';
 import { SuccessPage } from '../pages/success/SuccessPage';
 import { AdminLoginPage } from '../pages/admin-login/AdminLoginPage';
-import { AdminRequestsPage } from '../pages/admin-requests/AdminRequestsPage';
+import { AdminRequestsPage } from '../pages/admin/AdminRequestsPage';
 
 export const AppRouter = () => (
   <BrowserRouter>

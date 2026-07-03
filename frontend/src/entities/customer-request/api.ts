@@ -1,4 +1,5 @@
-import type { CustomerRequest, CreateBookingDto, CreatePreorderDto } from './types';
+import type { CustomerRequest, CustomerRequestStatus } from './model';
+import { mockCustomerRequests } from './mockData';
 
 // ============================================
 // TEMPORARY MOCK API
@@ -6,59 +7,64 @@ import type { CustomerRequest, CreateBookingDto, CreatePreorderDto } from './typ
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// хранилище заявок в памяти(мок)
-let mockRequests: CustomerRequest[] = [
-  // тестовые заявки
-  {
-    id: '1',
-    type: 'booking',
-    status: 'pending',
-    createdAt: new Date().toISOString(),
-    name: 'Иван Тестовый',
-    phone: '+79991234567',
-    date: '2026-07-05',
-    time: '19:00',
-    guests: 4,
-  },
-];
+// Рабочая копия mock-данных (чтобы можно было менять статусы)
+let requests = [...mockCustomerRequests];
 
 export const customerRequestApi = {
-  async createBooking(dto: CreateBookingDto): Promise<CustomerRequest> {
+  // Получить все заявки для админки
+  async getAdminRequests(): Promise<CustomerRequest[]> {
+    await delay(600);
+    // Имитация случайной ошибки для проверки error state (10% шанс)
+    if (Math.random() < 0.02) {
+      throw new Error('Не удалось загрузить заявки');
+    }
+    return requests;
+  },
+
+  // Обновить статус заявки
+  async updateRequestStatus(
+    id: string,
+    status: CustomerRequestStatus
+  ): Promise<CustomerRequest> {
+    await delay(400);
+    const index = requests.findIndex((r) => r.id === id);
+    if (index === -1) {
+      throw new Error('Заявка не найдена');
+    }
+    requests[index] = { ...requests[index], status };
+    return requests[index];
+  },
+
+  async createBooking(dto: any): Promise<CustomerRequest> {
     await delay(1000);
     const newRequest: CustomerRequest = {
       id: String(Date.now()),
       type: 'booking',
-      status: 'pending',
+      status: 'new',
       createdAt: new Date().toISOString(),
-      ...dto,
+      customerName: dto.name,
+      contact: dto.phone,
+      desiredDatetime: `${dto.date}T${dto.time}:00`,
+      personCount: dto.guests,
     };
-    mockRequests = [...mockRequests, newRequest];
+    requests = [...requests, newRequest];
     return newRequest;
   },
 
-  async createPreorder(dto: CreatePreorderDto): Promise<CustomerRequest> {
+  async createPreorder(dto: any): Promise<CustomerRequest> {
     await delay(1000);
     const newRequest: CustomerRequest = {
       id: String(Date.now()),
       type: 'preorder',
-      status: 'pending',
+      status: 'new',
       createdAt: new Date().toISOString(),
-      ...dto,
+      customerName: dto.name,
+      contact: dto.phone,
+      desiredDatetime: `${dto.pickupDate}T${dto.pickupTime}:00`,
+      itemsCount: dto.items?.reduce((sum: number, i: any) => sum + i.quantity, 0) || 0,
+      comment: dto.comment,
     };
-    mockRequests = [...mockRequests, newRequest];
+    requests = [...requests, newRequest];
     return newRequest;
-  },
-
-  async getRequests(): Promise<CustomerRequest[]> {
-    await delay(500);
-    return mockRequests;
-  },
-
-  async updateStatus(id: string, status: CustomerRequest['status']): Promise<CustomerRequest> {
-    await delay(500);
-    const idx = mockRequests.findIndex((r) => r.id === id);
-    if (idx === -1) throw new Error('Заявка не найдена');
-    mockRequests[idx] = { ...mockRequests[idx], status };
-    return mockRequests[idx];
   },
 };
