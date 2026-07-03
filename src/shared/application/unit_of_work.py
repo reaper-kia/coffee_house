@@ -2,14 +2,14 @@ from typing import Protocol
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 
+from src.shared.outbox.application.repositories import OutboxRepository
 from src.modules.users.application.ports.user_repository import UserRepository
 
 
 
 class UnitOfWork(Protocol):
     users: UserRepository
-    # auth_tokens: SQLAlchemyAuthRepository  # если есть
-    # outbox: SQLAlchemyOutboxRepository     # если есть
+    outbox: OutboxRepository
 
     async def __aenter__(self) -> "UnitOfWork":
         ...

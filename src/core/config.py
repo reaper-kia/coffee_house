@@ -43,6 +43,20 @@ class Settings(BaseSettings):
     
     catalog_cache_ttl_seconds: int = 60
     
+    kafka_bootstrap_servers: str = "kafka:9093"
+    kafka_client_id: str = "coffee-house"
+    
+    kafka_lab_consumer_group: str = "coffee-house.kafka-lab"
+    
+    kafka_notifications_consumer_group: str = "coffee-house.notifications"
+    
+    kafka_customer_request_events_topic: str = "coffee.customer-request-events.v1"
+    kafka_customer_request_events_dlq_topic: str = "coffee.customer-request-events.dlq.v1"
+    kafka_consumer_max_attempts: int = 3
+    kafka_consumer_retry_delay_seconds: float = 1.0
+    
+    outbox_publisher_batch_size: int = 100
+    outbox_publisher_poll_interval_seconds: float = 1.0
     
     model_config = SettingsConfigDict(
         env_file=".env",

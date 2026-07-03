@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
+from src.shared.outbox.infra.repositories import SQLAlchemyOutboxRepository
 from src.modules.users.infra.repositories import SQLAlchemyUserRepository
 from src.shared.application.unit_of_work import UnitOfWork
 
@@ -11,6 +12,7 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
     async def __aenter__(self) -> "SQLAlchemyUnitOfWork":
         self.session = self._session_factory()
         self.users = SQLAlchemyUserRepository(self.session)
+        self.outbox = SQLAlchemyOutboxRepository(self.session)
 
         return self
 

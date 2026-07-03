@@ -14,7 +14,7 @@ from src.shared.infra.database.base import Base
 # from src.modules.catalog.infra.models import ServiceModel
 # from src.modules.consumers_request.infra.models import ConsumerRequestModel
 from src.modules.users.infra.models import UserModel  # noqa: F401
-
+from src.shared.outbox.infra.models import OutboxMessageModel  # noqa: F401
 
 config = context.config
 
