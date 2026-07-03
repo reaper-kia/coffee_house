@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.core.config import settings
 from src.shared.infra.database.base import Base
+from src.modules.catalog.infra import models as catalog_models
+
 
 # ВАЖНО:
 # здесь потом нужно импортировать ORM-модели,
