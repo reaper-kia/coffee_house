@@ -1,70 +1,52 @@
 import type { CustomerRequest, CustomerRequestStatus } from './model';
 import { mockCustomerRequests } from './mockData';
+import { apiClient } from '../../shared/api/client';
+import { config } from '../../shared/config/env';
 
 // ============================================
-// TEMPORARY MOCK API
+// API для работы с заявками
+// Поддерживает mock и реальный backend
 // ============================================
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// Mock реализация
+let mockRequests = [...mockCustomerRequests];
 
-// Рабочая копия mock-данных (чтобы можно было менять статусы)
-let requests = [...mockCustomerRequests];
-
-export const customerRequestApi = {
-  // Получить все заявки для админки
+const mockApi = {
   async getAdminRequests(): Promise<CustomerRequest[]> {
-    await delay(600);
-    // Имитация случайной ошибки для проверки error state (10% шанс)
-    if (Math.random() < 0.02) {
-      throw new Error('Не удалось загрузить заявки');
-    }
-    return requests;
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    return mockRequests;
   },
 
-  // Обновить статус заявки
   async updateRequestStatus(
     id: string,
     status: CustomerRequestStatus
   ): Promise<CustomerRequest> {
-    await delay(400);
-    const index = requests.findIndex((r) => r.id === id);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    const index = mockRequests.findIndex((r) => r.id === id);
     if (index === -1) {
       throw new Error('Заявка не найдена');
     }
-    requests[index] = { ...requests[index], status };
-    return requests[index];
-  },
-
-  async createBooking(dto: any): Promise<CustomerRequest> {
-    await delay(1000);
-    const newRequest: CustomerRequest = {
-      id: String(Date.now()),
-      type: 'booking',
-      status: 'new',
-      createdAt: new Date().toISOString(),
-      customerName: dto.name,
-      contact: dto.phone,
-      desiredDatetime: `${dto.date}T${dto.time}:00`,
-      personCount: dto.guests,
-    };
-    requests = [...requests, newRequest];
-    return newRequest;
-  },
-
-  async createPreorder(dto: any): Promise<CustomerRequest> {
-    await delay(1000);
-    const newRequest: CustomerRequest = {
-      id: String(Date.now()),
-      type: 'preorder',
-      status: 'new',
-      createdAt: new Date().toISOString(),
-      customerName: dto.name,
-      contact: dto.phone,
-      desiredDatetime: `${dto.pickupDate}T${dto.pickupTime}:00`,
-      itemsCount: dto.items?.reduce((sum: number, i: any) => sum + i.quantity, 0) || 0,
-      comment: dto.comment,
-    };
-    requests = [...requests, newRequest];
-    return newRequest;
+    mockRequests[index] = { ...mockRequests[index], status };
+    return mockRequests[index];
   },
 };
+
+// Real API реализация
+const realApi = {
+  async getAdminRequests(): Promise<CustomerRequest[]> {
+    return apiClient.get<CustomerRequest[]>('/admin/customer-requests');
+  },
+
+  async updateRequestStatus(
+    id: string,
+    status: CustomerRequestStatus
+  ): Promise<CustomerRequest> {
+    return apiClient.patch<CustomerRequest>(
+      `/admin/customer-requests/${id}/status`,
+      { status }
+    );
+  },
+};
+
+// Экспортируем API в зависимости от конфигурации
+export const customerRequestApi = config.USE_MOCK_API ? mockApi : realApi;

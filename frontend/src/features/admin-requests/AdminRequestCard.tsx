@@ -4,7 +4,7 @@ import { AdminRequestStatusSelect } from './AdminRequestStatusSelect';
 
 interface Props {
   request: CustomerRequest;
-  onStatusChange: (requestId: string, newStatus: CustomerRequestStatus) => void;
+  onStatusChange: (requestId: string, newStatus: CustomerRequestStatus) => Promise<void>;
 }
 
 const typeLabels: Record<CustomerRequest['type'], string> = {

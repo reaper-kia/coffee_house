@@ -33,16 +33,16 @@ export const AdminRequestsPage = () => {
 
   // Обработчик смены статуса
   const handleStatusChange = async (requestId: string, newStatus: CustomerRequestStatus) => {
-    try {
-      const updated = await customerRequestApi.updateRequestStatus(requestId, newStatus);
-      setRequests((prev) =>
-        prev.map((req) => (req.id === updated.id ? updated : req))
-      );
-    } catch (err) {
-      console.error('Ошибка обновления статуса:', err);
-      alert('Не удалось обновить статус');
-    }
-  };
+  try {
+    const updated = await customerRequestApi.updateRequestStatus(requestId, newStatus);
+    setRequests((prev) =>
+      prev.map((req) => (req.id === updated.id ? updated : req))
+    );
+  } catch (err) {
+    // Ошибка уже обработана в AdminRequestStatusSelect
+    throw err;
+  }
+};
 
   // Применяем фильтр
   const filteredRequests = filterAdminRequestsByStatus(requests, currentFilter);
@@ -52,7 +52,25 @@ export const AdminRequestsPage = () => {
       <h1>📋 Заявки клиентов</h1>
 
       {isLoading && <Loading />}
-      {error && <ErrorMessage message={error} />}
+      {error && (
+  <div>
+    <ErrorMessage message={error} />
+    <button
+      onClick={() => window.location.reload()}
+      style={{
+        padding: '8px 16px',
+        background: '#007bff',
+        color: 'white',
+        border: 'none',
+        borderRadius: '6px',
+        cursor: 'pointer',
+        marginTop: '10px',
+      }}
+    >
+      Попробовать снова
+    </button>
+  </div>
+)}
 
       {!isLoading && !error && (
         <>
