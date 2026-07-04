@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { customerRequestApi } from '../../entities/customer-request/api';
 import type { CustomerRequest, CustomerRequestStatus } from '../../entities/customer-request/model';
 import { AdminRequestsList } from '../../features/admin-requests/AdminRequestsList';
@@ -8,12 +9,18 @@ import { Loading } from '../../shared/ui/Loading';
 import { ErrorMessage } from '../../shared/ui/ErrorMessage';
 
 export const AdminRequestsPage = () => {
+  const navigate = useNavigate();
   const [requests, setRequests] = useState<CustomerRequest[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentFilter, setCurrentFilter] = useState<FilterValue>('all');
 
-  // Загрузка заявок
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('current_user');
+    navigate('/admin/login');
+  };
+
   useEffect(() => {
     const fetchRequests = async () => {
       setIsLoading(true);
@@ -31,46 +38,60 @@ export const AdminRequestsPage = () => {
     fetchRequests();
   }, []);
 
-  // Обработчик смены статуса
   const handleStatusChange = async (requestId: string, newStatus: CustomerRequestStatus) => {
-  try {
-    const updated = await customerRequestApi.updateRequestStatus(requestId, newStatus);
-    setRequests((prev) =>
-      prev.map((req) => (req.id === updated.id ? updated : req))
-    );
-  } catch (err) {
-    // Ошибка уже обработана в AdminRequestStatusSelect
-    throw err;
-  }
-};
+    try {
+      const updated = await customerRequestApi.updateRequestStatus(requestId, newStatus);
+      setRequests((prev) =>
+        prev.map((req) => (req.id === updated.id ? updated : req))
+      );
+    } catch (err) {
+      console.error('Ошибка обновления статуса:', err);
+      alert('Не удалось обновить статус');
+    }
+  };
 
-  // Применяем фильтр
   const filteredRequests = filterAdminRequestsByStatus(requests, currentFilter);
 
   return (
     <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-      <h1>📋 Заявки клиентов</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingBottom: '20px', borderBottom: '1px solid #eee' }}>
+        <h1 style={{ margin: 0 }}> Заявки клиентов</h1>
+        <button 
+          onClick={handleLogout}
+          style={{
+            padding: '8px 16px',
+            background: '#dc3545',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+          }}
+        >
+          Выйти
+        </button>
+      </div>
 
       {isLoading && <Loading />}
       {error && (
-  <div>
-    <ErrorMessage message={error} />
-    <button
-      onClick={() => window.location.reload()}
-      style={{
-        padding: '8px 16px',
-        background: '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        marginTop: '10px',
-      }}
-    >
-      Попробовать снова
-    </button>
-  </div>
-)}
+        <div>
+          <ErrorMessage message={error} />
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              padding: '8px 16px',
+              background: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              marginTop: '10px',
+            }}
+          >
+            Попробовать снова
+          </button>
+        </div>
+      )}
 
       {!isLoading && !error && (
         <>

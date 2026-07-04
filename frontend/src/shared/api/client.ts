@@ -9,16 +9,14 @@ interface ApiResponse<T> {
 }
 
 // Базовая функция для запросов
-async function request<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const token = localStorage.getItem('access_token');
   
-  const response = await fetch(url, {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });

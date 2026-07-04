@@ -4,5 +4,5 @@ export const config = {
   USE_MOCK_API: true,
   
   // URL backend API (когда USE_MOCK_API = false)
-  API_BASE_URL: 'http://localhost:3000/api',
+  API_BASE_URL: 'http://localhost:8000',
 };

@@ -6,6 +6,7 @@ import { PreorderPage } from '../pages/preorder/PreorderPage';
 import { SuccessPage } from '../pages/success/SuccessPage';
 import { AdminLoginPage } from '../pages/admin-login/AdminLoginPage';
 import { AdminRequestsPage } from '../pages/admin/AdminRequestsPage';
+import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 
 export const AppRouter = () => (
   <BrowserRouter>
@@ -16,7 +17,14 @@ export const AppRouter = () => (
       <Route path="/preorder" element={<PreorderPage />} />
       <Route path="/success" element={<SuccessPage />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />
-      <Route path="/admin/requests" element={<AdminRequestsPage />} />
+      <Route
+        path="/admin/requests"
+        element={
+          <ProtectedRoute>
+            <AdminRequestsPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   </BrowserRouter>
 );

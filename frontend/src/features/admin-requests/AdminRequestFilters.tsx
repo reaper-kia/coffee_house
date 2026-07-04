@@ -1,4 +1,4 @@
-import type { FilterValue } from './adminRequestFilters';
+import type { FilterValue } from './requestFilters';
 
 interface Props {
   currentFilter: FilterValue;
