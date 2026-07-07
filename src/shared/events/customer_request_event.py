@@ -65,8 +65,13 @@ def create_customer_request_status_changed_event(
     request_type: str,
     old_status: str,
     new_status: str,
+    customer_telegram_chat_id: str,
     changed_by_admin_id: UUID,
     changed_at: datetime,
+    customer_name: str | None = None,
+    desired_datetime: datetime | None = None,
+    persons_count: int | None = None,
+    comment: str | None = None,
 ) -> IntegrationEvent:
     return IntegrationEvent(
         event_type=CUSTOMER_REQUEST_STATUS_CHANGED,
@@ -77,7 +82,16 @@ def create_customer_request_status_changed_event(
             "request_type": request_type,
             "old_status": old_status,
             "new_status": new_status,
+            "customer_telegram_chat_id": customer_telegram_chat_id,
             "changed_by_admin_id": str(changed_by_admin_id),
             "changed_at": changed_at.isoformat(),
+            "customer_name": customer_name,
+            "desired_datetime": (
+                desired_datetime.isoformat()
+                if desired_datetime is not None
+                else None
+            ),
+            "persons_count": persons_count,
+            "comment": comment,
         },
     )

@@ -3,130 +3,127 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from modules.notifications.application.ports.notification_delivery_repository import NotificationReadRepository, NotificationRepository
-from src.modules.notifications.application.read_models import NotificationReadModel
-from src.modules.notifications.domain.entities import Notification
-from src.modules.notifications.domain.enums import NotificationType
+
+from src.modules.notifications.application.ports.notification_delivery_repository import NotificationDeliveryRepository
+from src.modules.notifications.application.ports.processed_message_repository import ProcessedKafkaMessageRepository
+from src.modules.notifications.domain.delivery import NotificationDelivery
+from src.modules.notifications.domain.enums import NotificationChannel, NotificationDeliveryStatus
+from src.modules.notifications.domain.processed_message import ProcessedKafkaMessage
+from src.modules.notifications.infra.models import NotificationDeliveryModel, ProcessedKafkaMessageModel
 from src.modules.notifications.domain.exceptions import NotificationNotFoundError
-from src.modules.notifications.infra.models import NotificationModel
 
 
-class SQLAlchemyNotificationRepository(NotificationRepository):
+
+class SQLAlchemyNotificationDeliveryRepository(NotificationDeliveryRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
     
-    async def add(self, notification: Notification) -> Notification:
+    async def add(self, notification: NotificationDelivery) -> NotificationDelivery:
         self.session.add(self._to_model(notification))
         
         return notification
         
-    async def save(self, notification: Notification) -> None:
-        model = await self.session.get(NotificationModel, notification.id)
+    async def save(self, notification: NotificationDelivery) -> None:
+        model = await self.session.get(NotificationDeliveryModel, notification.id)
         
         if model is None:
             raise NotificationNotFoundError("Notification not found.")
         
-        model.recipient_id = notification.recipient_id
-        model.notification_type = notification.notification_type.value
-        model.title = notification.title
-        model.message = notification.message
-        model.source_event_id = notification.source_event_id
-        model.is_read = notification.is_read
-        model.created_at = notification.created_at
-        model.read_at = notification.read_at
+        self._apply_entity_to_model(notification, model)
     
-    async def get_by_id(self, notification_id) -> Notification | None:
-        model = await self.session.get(NotificationModel, notification_id)
-        
-        if model is None:
-            return None
-        
-        return self._to_entity(model)
-    
-    async def get_by_source_event_id(
-        self,
-        source_event_id: UUID,
-    ) -> Notification | None:
-        stmt = select(NotificationModel).where(
-            NotificationModel.source_event_id == source_event_id
+    async def get_by_event_channel_recipient(self, *, event_id: UUID, channel: NotificationChannel, recipient: str) -> NotificationDelivery | None:
+        stmt = select(NotificationDeliveryModel).where(
+            NotificationDeliveryModel.event_id == event_id,
+            NotificationDeliveryModel.channel == channel.value,
+            NotificationDeliveryModel.recipient == recipient,
         )
-
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
-
+        
         if model is None:
             return None
-
         return self._to_entity(model)
+        
+        
+
+
     
     @staticmethod
-    def _to_model(notification: Notification) -> NotificationModel:
-        return NotificationModel(
-            id=notification.id,
-            recipient_id=notification.recipient_id,
-            notification_type=notification.notification_type.value,
-            title=notification.title,
-            message=notification.message,
-            source_event_id=notification.source_event_id,
-            is_read=notification.is_read,
-            created_at=notification.created_at,
-            read_at=notification.read_at,
+    def _to_model(delivery: NotificationDelivery) -> NotificationDeliveryModel:
+        return NotificationDeliveryModel(
+            id=delivery.id,
+            event_id=delivery.event_id,
+            customer_request_id=delivery.customer_request_id,
+            channel=delivery.channel.value,
+            recipient=delivery.recipient,
+            message=delivery.message,
+            status=delivery.status.value,
+            attempts=delivery.attempts,
+            last_error=delivery.last_error,
+            sent_at=delivery.sent_at,
+            created_at=delivery.created_at,
+            updated_at=delivery.updated_at,
         )
-    
+
     @staticmethod
-    def _to_entity(model: NotificationModel) -> Notification:
-        return Notification(
+    def _to_entity(model: NotificationDeliveryModel) -> NotificationDelivery:
+        return NotificationDelivery(
             id=model.id,
-            recipient_id=model.recipient_id,
-            notification_type=NotificationType(model.notification_type),
-            title=model.title,
+            event_id=model.event_id,
+            customer_request_id=model.customer_request_id,
+            channel=NotificationChannel(model.channel),
+            recipient=model.recipient,
             message=model.message,
-            source_event_id=model.source_event_id,
-            is_read=model.is_read,
+            status=NotificationDeliveryStatus(model.status),
+            attempts=model.attempts,
+            last_error=model.last_error,
+            sent_at=model.sent_at,
             created_at=model.created_at,
-            read_at=model.read_at,
+            updated_at=model.updated_at,
         )
+
+    @staticmethod
+    def _apply_entity_to_model(
+        delivery: NotificationDelivery,
+        model: NotificationDeliveryModel,
+    ) -> None:
+        model.event_id = delivery.event_id
+        model.customer_request_id = delivery.customer_request_id
+        model.channel = delivery.channel.value
+        model.recipient = delivery.recipient
+        model.message = delivery.message
+        model.status = delivery.status.value
+        model.attempts = delivery.attempts
+        model.last_error = delivery.last_error
+        model.sent_at = delivery.sent_at
+        model.created_at = delivery.created_at
+        model.updated_at = delivery.updated_at
     
-class SQLAlchemyNotificationReadRepository(NotificationReadRepository):
+class SQLAlchemyProcessedKafkaMessageRepository(ProcessedKafkaMessageRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
         
-    async def get_by_user_id(self, user_id: UUID, *, limit: int = 20, offset: int = 0, is_read: bool | None = None) -> list[NotificationReadModel]:
-        stmt = (
-            select(
-                NotificationModel.id,
-                NotificationModel.recipient_id,
-                NotificationModel.notification_type,
-                NotificationModel.title,
-                NotificationModel.message,
-                NotificationModel.source_event_id,
-                NotificationModel.is_read,
-                NotificationModel.created_at,
-                NotificationModel.read_at,
-            )
-            .where(NotificationModel.recipient_id == user_id)
-            .order_by(NotificationModel.created_at.desc())
-            .limit(limit)
-            .offset(offset)
-        )
+    async def add(self, message: ProcessedKafkaMessage) -> ProcessedKafkaMessage:
+        self.session.add(self._to_model(message))
         
-        if is_read is not None:
-            stmt = stmt.where(NotificationModel.is_read == is_read)
-        
+        return message
+
+    async def exists(self, event_id: UUID) -> bool:
+        stmt = select(ProcessedKafkaMessageModel).where(ProcessedKafkaMessageModel.event_id == event_id)
         result = await self.session.execute(stmt)
-        rows = result.all()
+        return result.scalar_one_or_none() is not None
         
-        return [
-            NotificationReadModel(
-                id=row.id,
-                recipient_id=row.recipient_id,
-                notification_type=row.notification_type,
-                title=row.title,
-                message=row.message,
-                source_event_id=row.source_event_id,
-                is_read=row.is_read,
-                created_at=row.created_at,
-                read_at=row.read_at,
-            )
-            for row in rows
-        ]
+        
+    
+    @staticmethod
+    def _to_model(message: ProcessedKafkaMessage) -> ProcessedKafkaMessageModel:
+        return ProcessedKafkaMessageModel(
+            id=message.id,
+            event_id=message.event_id,
+            topic=message.topic,
+            partition=message.partition,
+            offset=message.offset,
+            consumer_group=message.consumer_group,
+            event_type=message.event_type,
+            processed_at=message.processed_at,
+        )

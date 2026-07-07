@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     outbox_publisher_batch_size: int = 100
     outbox_publisher_poll_interval_seconds: float = 1.0
     
+    telegram_bot_token: str = ""
+    telegram_api_timeout_seconds: float = 10.0
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

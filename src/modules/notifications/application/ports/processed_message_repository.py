@@ -4,7 +4,7 @@ from uuid import UUID
 from src.modules.notifications.domain.processed_message import ProcessedKafkaMessage
 
 
-class ProcessedMessageRepository(Protocol):
+class ProcessedKafkaMessageRepository(Protocol):
     async def exists(self, event_id: UUID) -> bool:
         ...
 

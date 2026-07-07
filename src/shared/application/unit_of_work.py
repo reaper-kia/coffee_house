@@ -1,7 +1,8 @@
 from typing import Protocol
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 
+from src.modules.notifications.application.ports.notification_delivery_repository import NotificationDeliveryRepository
+from src.modules.notifications.application.ports.processed_message_repository import ProcessedKafkaMessageRepository
 from src.shared.outbox.application.repositories import OutboxRepository
 from src.modules.users.application.ports.user_repository import UserRepository
 
@@ -10,6 +11,8 @@ from src.modules.users.application.ports.user_repository import UserRepository
 class UnitOfWork(Protocol):
     users: UserRepository
     outbox: OutboxRepository
+    notification_deliveries: NotificationDeliveryRepository
+    processed_kafka_messages: ProcessedKafkaMessageRepository
 
     async def __aenter__(self) -> "UnitOfWork":
         ...

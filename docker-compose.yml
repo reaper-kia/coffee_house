@@ -94,6 +94,23 @@ services:
         condition: service_healthy
     command: python -m src.workers.outbox_publisher
     restart: unless-stopped
+  
+  customer_request_notifications_consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coffee_house_customer_request_notification_consumer
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      db: 
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    command: python -m src.workers.customer_request_notifications_consumer
+    restart: unless-stopped
 
 
 volumes:
