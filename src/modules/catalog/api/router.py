@@ -93,7 +93,7 @@ async def get_menu_item(
 admin_router = APIRouter(
     prefix="/admin/catalog",
     tags=["Admin Catalog"],
-    # dependencies=[Depends(require_admin)], #
+    dependencies=[Depends(require_admin)],
 )
 
 
