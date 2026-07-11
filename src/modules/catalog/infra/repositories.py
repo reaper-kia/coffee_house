@@ -47,49 +47,23 @@ class SQLAlchemyMenuCategoryRepository(MenuCategoryRepository):
             model.position = category.position.value
             model.is_active = category.is_active
 
-        await self.session.commit()
-
-    async def get_by_id(self, id: UUID) -> Optional[MenuCategory]:
-        stmt = select(MenuCategoryModel).where(MenuCategoryModel.id == id)
+    async def get_by_id(self, category_id: UUID) -> Optional[MenuCategory]:
+        stmt = select(MenuCategoryModel).where(MenuCategoryModel.id == category_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         if model is None:
             return None
         return self._to_domain(model)
 
-    async def delete(self, id: UUID) -> None:
-        stmt = select(MenuCategoryModel).where(MenuCategoryModel.id == id)
+    async def delete(self, category_id: UUID) -> None:
+        stmt = select(MenuCategoryModel).where(MenuCategoryModel.id == category_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         if model:
             await self.session.delete(model)
-            await self.session.commit()
 
-    async def list_all(self, limit: int = 100, offset: int = 0) -> List[MenuCategory]:
-        stmt = (
-            select(MenuCategoryModel)
-            .order_by(MenuCategoryModel.position, MenuCategoryModel.title)
-            .limit(limit)
-            .offset(offset)
-        )
-        result = await self.session.execute(stmt)
-        models = result.scalars().all()
-        return [self._to_domain(model) for model in models]
-
-    async def list_active(self, limit: int = 100, offset: int = 0) -> List[MenuCategory]:
-        stmt = (
-            select(MenuCategoryModel)
-            .where(MenuCategoryModel.is_active == True)
-            .order_by(MenuCategoryModel.position, MenuCategoryModel.title)
-            .limit(limit)
-            .offset(offset)
-        )
-        result = await self.session.execute(stmt)
-        models = result.scalars().all()
-        return [self._to_domain(model) for model in models]
-
-    async def exists_by_id(self, id: UUID) -> bool:
-        stmt = select(exists().where(MenuCategoryModel.id == id))
+    async def exists_by_id(self, category_id: UUID) -> bool:
+        stmt = select(exists().where(MenuCategoryModel.id == category_id))
         result = await self.session.execute(stmt)
         return result.scalar_one()
 
@@ -101,7 +75,6 @@ class SQLAlchemyMenuCategoryRepository(MenuCategoryRepository):
             position=Position(model.position),
             is_active=model.is_active,
         )
-
 
 
 class SQLAlchemyMenuItemRepository(MenuItemRepository):
@@ -136,61 +109,23 @@ class SQLAlchemyMenuItemRepository(MenuItemRepository):
             model.image_url = item.image_url
             model.position = item.position.value
 
-        await self.session.commit()
-
-    async def get_by_id(self, id: UUID) -> Optional[MenuItem]:
-        stmt = select(MenuItemModel).where(MenuItemModel.id == id)
+    async def get_by_id(self, item_id: UUID) -> Optional[MenuItem]:
+        stmt = select(MenuItemModel).where(MenuItemModel.id == item_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         if model is None:
             return None
         return self._to_domain(model)
 
-    async def delete(self, id: UUID) -> None:
-        stmt = select(MenuItemModel).where(MenuItemModel.id == id)
+    async def delete(self, item_id: UUID) -> None:
+        stmt = select(MenuItemModel).where(MenuItemModel.id == item_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         if model:
             await self.session.delete(model)
-            await self.session.commit()
 
-    async def list_by_category(self, category_id: UUID, limit: int = 100, offset: int = 0) -> List[MenuItem]:
-        stmt = (
-            select(MenuItemModel)
-            .where(MenuItemModel.category_id == category_id)
-            .order_by(MenuItemModel.position, MenuItemModel.title)
-            .limit(limit)
-            .offset(offset)
-        )
-        result = await self.session.execute(stmt)
-        models = result.scalars().all()
-        return [self._to_domain(model) for model in models]
-
-    async def list_available(self, limit: int = 100, offset: int = 0) -> List[MenuItem]:
-        stmt = (
-            select(MenuItemModel)
-            .where(MenuItemModel.is_available == True)
-            .order_by(MenuItemModel.position, MenuItemModel.title)
-            .limit(limit)
-            .offset(offset)
-        )
-        result = await self.session.execute(stmt)
-        models = result.scalars().all()
-        return [self._to_domain(model) for model in models]
-
-    async def list_all(self, limit: int = 100, offset: int = 0) -> List[MenuItem]:
-        stmt = (
-            select(MenuItemModel)
-            .order_by(MenuItemModel.position, MenuItemModel.title)
-            .limit(limit)
-            .offset(offset)
-        )
-        result = await self.session.execute(stmt)
-        models = result.scalars().all()
-        return [self._to_domain(model) for model in models]
-
-    async def exists_by_id(self, id: UUID) -> bool:
-        stmt = select(exists().where(MenuItemModel.id == id))
+    async def exists_by_id(self, item_id: UUID) -> bool:
+        stmt = select(exists().where(MenuItemModel.id == item_id))
         result = await self.session.execute(stmt)
         return result.scalar_one()
 
@@ -206,7 +141,6 @@ class SQLAlchemyMenuItemRepository(MenuItemRepository):
             image_url=model.image_url,
             position=Position(model.position),
         )
-
 
 
 class SQLAlchemyMenuCategoryReadRepository:

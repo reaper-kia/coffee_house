@@ -1,4 +1,6 @@
 # tests/e2e/test_full_scenarios.py
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
 

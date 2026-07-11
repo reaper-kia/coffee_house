@@ -49,6 +49,9 @@ from src.modules.catalog.application.commands.update_menu_item import (
 from src.modules.catalog.application.commands.delete_menu_item import (
     DeleteMenuItemCommand,
 )
+from src.modules.catalog.application.commands.change_menu_item_availability import (
+    ChangeMenuItemAvailabilityCommand,
+)
 
 # ----- Хендлеры (команды) -----
 from src.modules.catalog.application.handlers.create_menu_category import (
@@ -69,8 +72,11 @@ from src.modules.catalog.application.handlers.update_menu_item import (
 from src.modules.catalog.application.handlers.delete_menu_item import (
     DeleteMenuItemHandler,
 )
+from src.modules.catalog.application.handlers.change_menu_item_availability import (
+    ChangeMenuItemAvailabilityHandler,
+)
 
-# ----- Запросы (queries) – исправленные имена -----
+# ----- Запросы (queries) -----
 from src.modules.catalog.application.queries.get_categories import (
     GetCategoriesQuery,
 )
@@ -124,51 +130,48 @@ async def get_menu_item_read_repository(
 
 
 # ============================================================================
-# 3. Фабрики командных хендлеров
-
+# 3. Фабрики командных хендлеров (write) – только UoW
+# ============================================================================
 
 async def get_create_menu_category_handler(
-    repo: MenuCategoryRepository = Depends(get_menu_category_repository),
     uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
 ) -> CreateMenuCategoryHandler:
-    return CreateMenuCategoryHandler(repo, uow_factory)
+    return CreateMenuCategoryHandler(uow_factory)
 
 async def get_update_menu_category_handler(
-    repo: MenuCategoryRepository = Depends(get_menu_category_repository),
     uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
 ) -> UpdateMenuCategoryHandler:
-    return UpdateMenuCategoryHandler(repo, uow_factory)
+    return UpdateMenuCategoryHandler(uow_factory)
 
 async def get_delete_menu_category_handler(
-    repo: MenuCategoryRepository = Depends(get_menu_category_repository),
     uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
 ) -> DeleteMenuCategoryHandler:
-    return DeleteMenuCategoryHandler(repo, uow_factory)
+    return DeleteMenuCategoryHandler(uow_factory)
 
 async def get_create_menu_item_handler(
-    item_repo: MenuItemRepository = Depends(get_menu_item_repository),
-    category_repo: MenuCategoryRepository = Depends(get_menu_category_repository),
     uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
 ) -> CreateMenuItemHandler:
-    return CreateMenuItemHandler(item_repo, category_repo, uow_factory)
+    return CreateMenuItemHandler(uow_factory)
 
 async def get_update_menu_item_handler(
-    item_repo: MenuItemRepository = Depends(get_menu_item_repository),
-    category_repo: MenuCategoryRepository = Depends(get_menu_category_repository),
     uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
 ) -> UpdateMenuItemHandler:
-    return UpdateMenuItemHandler(item_repo, category_repo, uow_factory)
+    return UpdateMenuItemHandler(uow_factory)
 
 async def get_delete_menu_item_handler(
-    item_repo: MenuItemRepository = Depends(get_menu_item_repository),
     uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
 ) -> DeleteMenuItemHandler:
-    return DeleteMenuItemHandler(item_repo, uow_factory)
+    return DeleteMenuItemHandler(uow_factory)
+
+async def get_change_menu_item_availability_handler(
+    uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
+) -> ChangeMenuItemAvailabilityHandler:
+    return ChangeMenuItemAvailabilityHandler(uow_factory)
 
 
-
-# 4. Фабрики query-хендлеров
-
+# ============================================================================
+# 4. Фабрики query-хендлеров (чтение)
+# ============================================================================
 
 async def get_list_categories_handler(
     read_repo: MenuCategoryReadRepository = Depends(get_menu_category_read_repository),
@@ -187,7 +190,7 @@ async def get_get_menu_item_by_id_handler(
 
 
 # ============================================================================
-# 5. Медиатор
+# 5. Медиатор (регистрация всех команд и запросов)
 # ============================================================================
 
 async def get_catalog_mediator(
@@ -197,19 +200,23 @@ async def get_catalog_mediator(
     create_menu_item_handler: CreateMenuItemHandler = Depends(get_create_menu_item_handler),
     update_menu_item_handler: UpdateMenuItemHandler = Depends(get_update_menu_item_handler),
     delete_menu_item_handler: DeleteMenuItemHandler = Depends(get_delete_menu_item_handler),
+    change_availability_handler: ChangeMenuItemAvailabilityHandler = Depends(get_change_menu_item_availability_handler),
     list_categories_handler: ListCategoriesHandler = Depends(get_list_categories_handler),
     list_menu_items_handler: ListMenuItemsHandler = Depends(get_list_menu_items_handler),
     get_menu_item_by_id_handler: GetMenuItemByIdHandler = Depends(get_get_menu_item_by_id_handler),
 ) -> Mediator:
     mediator = Mediator()
 
+    # Регистрация команд (write)
     mediator.register(CreateMenuCategoryCommand, create_menu_category_handler)
     mediator.register(UpdateMenuCategoryCommand, update_menu_category_handler)
     mediator.register(DeleteMenuCategoryCommand, delete_menu_category_handler)
     mediator.register(CreateMenuItemCommand, create_menu_item_handler)
     mediator.register(UpdateMenuItemCommand, update_menu_item_handler)
     mediator.register(DeleteMenuItemCommand, delete_menu_item_handler)
+    mediator.register(ChangeMenuItemAvailabilityCommand, change_availability_handler)
 
+    # Регистрация запросов (read)
     mediator.register(GetCategoriesQuery, list_categories_handler)
     mediator.register(GetMenuItemsQuery, list_menu_items_handler)
     mediator.register(GetMenuItemQuery, get_menu_item_by_id_handler)

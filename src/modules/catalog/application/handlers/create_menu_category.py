@@ -1,24 +1,19 @@
-from src.modules.catalog.application.ports.menu_category_repository import MenuCategoryRepository
-from src.shared.application.unit_of_work import UnitOfWorkFactory
 from src.modules.catalog.domain.entities import MenuCategory
+from src.modules.catalog.domain.value_objects import CategoryTitle, Position
+from src.shared.application.unit_of_work import UnitOfWorkFactory
 from ..commands.create_menu_category import CreateMenuCategoryCommand
 
 class CreateMenuCategoryHandler:
-    def __init__(
-        self,
-        repo: MenuCategoryRepository,
-        uow_factory: UnitOfWorkFactory,
-    ):
-        self.repo = repo
+    def __init__(self, uow_factory: UnitOfWorkFactory):
         self.uow_factory = uow_factory
 
     async def handle(self, cmd: CreateMenuCategoryCommand) -> MenuCategory:
         category = MenuCategory.create(
-            title=cmd.title,
-            position=cmd.position,
+            title=CategoryTitle(cmd.title),
+            position=Position(cmd.position),
             is_active=cmd.is_active,
         )
         async with self.uow_factory() as uow:
-            await self.repo.save(category)
+            await uow.menu_categories.save(category)
             await uow.commit()
         return category

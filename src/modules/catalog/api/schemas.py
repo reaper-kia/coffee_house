@@ -2,11 +2,8 @@
 from decimal import Decimal
 from uuid import UUID
 from pydantic import BaseModel, Field, ConfigDict
+from src.modules.catalog.domain.entities import MenuCategory, MenuItem
 
-
-# ============================================
-# Ответы (для публичных и админских эндпоинтов)
-# ============================================
 
 class CategoryResponse(BaseModel):
     id: UUID
@@ -72,3 +69,29 @@ class UpdateMenuItemRequest(BaseModel):
 
 class ChangeAvailabilityRequest(BaseModel):
     is_available: bool
+
+
+def category_to_response(category: "MenuCategory") -> CategoryResponse:
+    """Преобразует доменную сущность Category в Pydantic-схему."""
+    return CategoryResponse(
+        id=category.id,
+        title=category.title.value,          # Извлекаем примитив из VO
+        position=category.position.value,    # Извлекаем примитив из VO
+        is_active=category.is_active,
+    )
+
+
+def menu_item_to_response(item: "MenuItem") -> MenuItemResponse:
+    """Преобразует доменную сущность MenuItem в Pydantic-схему."""
+    return MenuItemResponse(
+        id=item.id,
+        category_id=item.category_id,
+        category_title=None,  # Заполняется из read-модели, если есть
+        title=item.title.value,               # Из VO
+        description=item.description.value,   # Из VO
+        price_amount=item.price.amount,       # Из VO Money
+        price_currency=item.price.currency,   # Из VO Money
+        image_url=item.image_url,
+        is_available=item.is_available,
+        position=item.position.value,         # Из VO Position
+    )

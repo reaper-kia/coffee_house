@@ -55,7 +55,7 @@ async def limit_login_request(
         limiter=limiter,
         action="login",
         limit=settings.auth_login_rate_limit,
-        window_seconds=settings.auth_login_rate_limit_window_seconds,
+        window_seconds=settings.auth_login_limit_window_seconds,
     )
 
 async def limit_register_request(

@@ -1,6 +1,10 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 from src.modules.users.infra.repositories import SQLAlchemyUserRepository
+from src.modules.catalog.infra.repositories import (
+    SQLAlchemyMenuCategoryRepository,
+    SQLAlchemyMenuItemRepository,
+)
 from src.shared.application.unit_of_work import UnitOfWork
 
 
@@ -11,7 +15,8 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
     async def __aenter__(self) -> "SQLAlchemyUnitOfWork":
         self.session = self._session_factory()
         self.users = SQLAlchemyUserRepository(self.session)
-
+        self.menu_categories = SQLAlchemyMenuCategoryRepository(self.session)
+        self.menu_items = SQLAlchemyMenuItemRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
