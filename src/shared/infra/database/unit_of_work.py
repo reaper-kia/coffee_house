@@ -6,6 +6,7 @@ from src.modules.catalog.infra.repositories import (
     SQLAlchemyMenuItemRepository,
 )
 from src.shared.application.unit_of_work import UnitOfWork
+from src.modules.customers_request.infra.repositories import SQLAlchemyOrderRepository
 
 
 class SQLAlchemyUnitOfWork(UnitOfWork):
@@ -17,6 +18,7 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.users = SQLAlchemyUserRepository(self.session)
         self.menu_categories = SQLAlchemyMenuCategoryRepository(self.session)
         self.menu_items = SQLAlchemyMenuItemRepository(self.session)
+        self.orders = SQLAlchemyOrderRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:

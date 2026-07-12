@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from src.modules.catalog.application.ports.menu_item_repository import (
         MenuItemRepository,
     )
-
+    from src.modules.customers_request.application.ports.order_repository import OrderRepository
 
 class UnitOfWork(Protocol):
     """
@@ -21,6 +21,7 @@ class UnitOfWork(Protocol):
     users: "UserRepository"
     menu_categories: "MenuCategoryRepository"
     menu_items: "MenuItemRepository"
+    orders: "OrderRepository"
 
     async def __aenter__(self) -> "UnitOfWork":
         """Вход в контекстный менеджер (открытие транзакции)."""

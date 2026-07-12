@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from uuid import UUID, uuid4
 
-from src.modules.catalog.domain.value_objects import CategoryTitle, Description, Position, ProductTitle, Money
+from src.modules.catalog.domain.value_objects import CategoryTitle, Description, Position, ProductTitle
+from src.shared.domain.value_objects import Money
 
 @dataclass
 class MenuItem:

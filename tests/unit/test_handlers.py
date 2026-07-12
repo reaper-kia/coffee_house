@@ -6,7 +6,8 @@ from src.modules.catalog.application.handlers.create_menu_category import Create
 from src.modules.catalog.application.handlers.create_menu_item import CreateMenuItemHandler
 from src.modules.catalog.application.commands.create_menu_category import CreateMenuCategoryCommand
 from src.modules.catalog.application.commands.create_menu_item import CreateMenuItemCommand
-from src.modules.catalog.domain.value_objects import CategoryTitle, ProductTitle, Money, Description, Position
+from src.modules.catalog.domain.value_objects import CategoryTitle, ProductTitle, Description, Position
+from src.shared.domain.value_objects import Money
 from src.modules.catalog.domain.exceptions import CategoryNotFoundError
 
 @pytest.mark.asyncio

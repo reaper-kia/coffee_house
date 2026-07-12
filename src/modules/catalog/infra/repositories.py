@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from src.modules.catalog.domain.entities import MenuItem, MenuCategory
+from src.shared.domain.value_objects import Money
 from src.modules.catalog.domain.value_objects import (
     ProductTitle,
     CategoryTitle,
-    Money,
     Description,
     Position,
 )

@@ -1,10 +1,10 @@
 import pytest
 from decimal import Decimal
 from src.modules.catalog.domain.entities import MenuCategory, MenuItem
+from src.shared.domain.value_objects import Money
 from src.modules.catalog.domain.value_objects import (
     CategoryTitle,
     ProductTitle,
-    Money,
     Description,
     Position,
 )

@@ -1,8 +1,9 @@
 from src.modules.catalog.domain.entities import MenuItem
-from src.modules.catalog.domain.value_objects import ProductTitle, Money, Description, Position
+from src.modules.catalog.domain.value_objects import ProductTitle, Description, Position
 from src.modules.catalog.domain.exceptions import MenuItemNotFoundError, CategoryNotFoundError
 from src.shared.application.unit_of_work import UnitOfWorkFactory
 from ..commands.update_menu_item import UpdateMenuItemCommand
+from src.shared.domain.value_objects import Money
 
 class UpdateMenuItemHandler:
     def __init__(self, uow_factory: UnitOfWorkFactory):

@@ -14,14 +14,6 @@ class InvalidProductDescriptionError(CatalogDomainError):
     """Некорректное описание товара."""
     pass
 
-class InvalidCurrencyError(CatalogDomainError):
-    """Неподдерживаемая валюта (только USD, EUR)."""
-    pass
-
-class NegativeAmountError(CatalogDomainError):
-    """Отрицательная сумма денег."""
-    pass
-
 class InvalidPositionError(CatalogDomainError):
     """Некорректная позиция (отрицательное значение)."""
     pass
