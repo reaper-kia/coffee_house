@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from src.modules.catalog.domain.exceptions import (
     InvalidCategoryNameError,
@@ -36,9 +37,11 @@ class CategoryTitle:
 
 @dataclass(frozen=True)
 class Description:
-    value: str
+    value: Optional[str] = None
 
     def __post_init__(self):
+        if self.value is None:
+            return
         normalized = self.value.strip()
         if len(normalized) > 2000:
             raise InvalidProductDescriptionError("Description is too long")

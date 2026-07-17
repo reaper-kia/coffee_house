@@ -209,6 +209,13 @@ class SQLAlchemyMenuItemReadRepository:
             stmt = stmt.where(MenuItemModel.category_id == category_id)
         if available_only:
             stmt = stmt.where(MenuItemModel.is_available == True)
+        stmt = stmt.where(
+            or_(
+                MenuItemModel.category_id.is_(None),
+                MenuCategoryModel.is_active == True
+            )
+        )
+
         if search:
             search_pattern = f"%{search}%"
             stmt = stmt.where(
@@ -256,6 +263,13 @@ class SQLAlchemyMenuItemReadRepository:
             MenuCategoryModel,
             MenuItemModel.category_id == MenuCategoryModel.id
         ).where(MenuItemModel.id == menu_item_id)
+        stmt = stmt.where(
+            MenuItemModel.is_available == True,
+            or_(
+                MenuItemModel.category_id.is_(None),
+                MenuCategoryModel.is_active == True
+            )
+        )
         result = await self.session.execute(stmt)
         row = result.one_or_none()
         if row is None:

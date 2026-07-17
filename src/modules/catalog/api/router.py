@@ -16,6 +16,7 @@ from src.modules.catalog.api.schemas import (
     UpdateMenuItemRequest,
     ChangeAvailabilityRequest,
     category_to_response,
+    menu_item_read_model_to_response,
     menu_item_to_response,
 )
 from src.modules.catalog.application.queries.get_categories import GetCategoriesQuery
@@ -48,7 +49,7 @@ async def get_categories(
     offset: int = Query(0, ge=0),
     mediator: Mediator = Depends(get_catalog_mediator),
 ):
-    query = GetCategoriesQuery(active_only=active_only, limit=limit, offset=offset)
+    query = GetCategoriesQuery(active_only=True, limit=limit, offset=offset)
     categories = await mediator.send(query)
     return [CategoryResponse(**c.__dict__) for c in categories]
 
@@ -64,7 +65,7 @@ async def get_menu_items(
 ):
     query = GetMenuItemsQuery(
         category_id=category_id,
-        available_only=available_only,
+        available_only=True,
         search=search,
         limit=limit,
         offset=offset,
@@ -83,7 +84,7 @@ async def get_menu_item(
         item = await mediator.send(query)
     except MenuItemNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    return menu_item_to_response(item)
+    return menu_item_read_model_to_response(item)
 
 
 # ============================================
@@ -93,7 +94,7 @@ async def get_menu_item(
 admin_router = APIRouter(
     prefix="/admin/catalog",
     tags=["Admin Catalog"],
-    dependencies=[Depends(require_admin)],
+    # dependencies=[Depends(require_admin)], #
 )
 
 

@@ -58,6 +58,8 @@ class MenuItem:
 
     def mark_unavailable(self) -> None:
         self.is_available = False
+    def change_position(self, new_position: Position) -> None:
+        self.position = new_position
         
 
 
