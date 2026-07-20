@@ -9,7 +9,15 @@ if TYPE_CHECKING:
     from src.modules.catalog.application.ports.menu_item_repository import (
         MenuItemRepository,
     )
-    from src.modules.customers_request.application.ports.order_repository import OrderRepository
+    # ---------- ИЗМЕНЕНИЕ 1: Замена OrderRepository на CustomerRequestRepository ----------
+    from src.modules.customer_requests.application.ports.customer_request_repository import (
+        CustomerRequestRepository,
+    )
+    # ---------- ИЗМЕНЕНИЕ 2: Добавление репозитория для снапшотов ----------
+    from src.modules.customer_requests.application.ports.menu_item_snapshot_repository import (
+        MenuItemSnapshotRepository,
+    )
+
 
 class UnitOfWork(Protocol):
     """
@@ -17,11 +25,18 @@ class UnitOfWork(Protocol):
     Управляет транзакциями и предоставляет доступ к репозиториям.
     """
 
-    # Репозитории
+    # Репозитории (существующие)
     users: "UserRepository"
     menu_categories: "MenuCategoryRepository"
     menu_items: "MenuItemRepository"
-    orders: "OrderRepository"
+
+    # ---------- ИЗМЕНЕНИЕ 3: Вместо orders теперь customer_requests ----------
+    customer_requests: "CustomerRequestRepository"
+
+    # ---------- ИЗМЕНЕНИЕ 4: Добавлен репозиторий для снапшотов ----------
+    menu_item_snapshots: "MenuItemSnapshotRepository"
+
+    # Outbox и другие репозитории (если они уже есть в протоколе) остаются без изменений
 
     async def __aenter__(self) -> "UnitOfWork":
         """Вход в контекстный менеджер (открытие транзакции)."""

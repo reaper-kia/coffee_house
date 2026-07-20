@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     redis_key_prefix: str = "coffee_house"
     
     auth_login_rate_limit: int = 5
-    auth_login_limit_window_seconds: int = 60
+    auth_login_rate_limit_window_seconds: int = 60
     auth_register_rate_limit: int = 3
     auth_register_rate_limit_window_seconds: int = 300
     

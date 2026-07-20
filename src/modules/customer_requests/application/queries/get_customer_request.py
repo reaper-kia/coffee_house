@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-
 @dataclass(frozen=True)
-class GetOrderByIdQuery:
-    order_id: UUID
-    buyer_id: UUID
+class GetCustomerRequestByIdQuery:
+    request_id: UUID

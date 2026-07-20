@@ -10,7 +10,8 @@ from src.modules.users.api.router import router as users_router
 from src.modules.auth.api.router import router as auth_router
 from src.modules.catalog.api.router import router as catalog_router
 from src.modules.catalog.api.router import admin_router
-from src.modules.customers_request.api.router import router as orders_router
+from src.modules.customer_requests.api.router import router as customer_requests_router
+from src.modules.customer_requests.api.router import admin_router as customer_requests_admin_router
 
 from src.shared.infra.database.health import check_database_connection
 from src.shared.infra.database.session import get_async_session
@@ -40,7 +41,8 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(catalog_router, prefix="/api/v1")
     app.include_router(admin_router, prefix="/api/v1")
-    app.include_router(orders_router, prefix = "/api/v1")
+    app.include_router(customer_requests_router, prefix="/api/v1")
+    app.include_router(customer_requests_admin_router, prefix="/api/v1")
 
     # Health checks
     @app.get("/health")
