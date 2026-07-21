@@ -20,23 +20,20 @@ if TYPE_CHECKING:
 
 
 class UnitOfWork(Protocol):
-    """
-    Интерфейс Unit of Work.
-    Управляет транзакциями и предоставляет доступ к репозиториям.
-    """
 
-    # Репозитории (существующие)
-    users: "UserRepository"
-    menu_categories: "MenuCategoryRepository"
-    menu_items: "MenuItemRepository"
+    users: UserRepository
+    menu_categories: MenuCategoryRepository
+    menu_items: MenuItemRepository
 
     # ---------- ИЗМЕНЕНИЕ 3: Вместо orders теперь customer_requests ----------
-    customer_requests: "CustomerRequestRepository"
+    customer_requests: CustomerRequestRepository
 
     # ---------- ИЗМЕНЕНИЕ 4: Добавлен репозиторий для снапшотов ----------
-    menu_item_snapshots: "MenuItemSnapshotRepository"
+    menu_item_snapshots: MenuItemSnapshotRepository
 
-    # Outbox и другие репозитории (если они уже есть в протоколе) остаются без изменений
+    outbox: OutboxRepository
+    notification_deliveries: NotificationDeliveryRepository
+    processed_kafka_messages: ProcessedKafkaMessageRepository
 
     async def __aenter__(self) -> "UnitOfWork":
         """Вход в контекстный менеджер (открытие транзакции)."""

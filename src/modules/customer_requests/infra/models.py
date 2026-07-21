@@ -26,7 +26,6 @@ class CustomerRequestModel(Base):
     desired_datetime: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
-        index=True,
     )
     person_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)

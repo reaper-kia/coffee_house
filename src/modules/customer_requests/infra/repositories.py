@@ -7,6 +7,7 @@ from sqlalchemy import select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from src.modules.customer_requests.domain.exceptions import CustomerRequestNotFound
 from src.modules.customer_requests.application.ports.customer_request_read_repository import CustomerRequestReadRepository
 from src.modules.customer_requests.application.ports.customer_request_repository import CustomerRequestRepository
 from src.modules.customer_requests.application.ports.menu_item_snapshot_repository import MenuItemSnapshotRepository, ProductSnapshot
@@ -62,7 +63,9 @@ class SQLAlchemyCustomerRequestRepository(CustomerRequestRepository):
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         if model is None:
-            raise ValueError(f"CustomerRequest with id {request.id} not found")
+            raise CustomerRequestNotFound(
+                f"Customer request {request.id} not found"
+            )
 
         # 2. Обновляем простые поля
         model.request_type = request.request_type.value
@@ -264,10 +267,10 @@ class SQLAlchemyMenuItemSnapshotRepository(MenuItemSnapshotRepository):
             )
             .where(
                 MenuItemModel.id.in_(menu_item_ids),
-                MenuItemModel.is_available == True,
+                MenuItemModel.is_available.is_(True),
                 or_(
                     MenuItemModel.category_id.is_(None),
-                    MenuCategoryModel.is_active == True,
+                    MenuCategoryModel.is_active.is_(True),
                 ),
             )
         )

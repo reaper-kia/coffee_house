@@ -19,6 +19,27 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.menu_categories = SQLAlchemyMenuCategoryRepository(self.session)
         self.menu_items = SQLAlchemyMenuItemRepository(self.session)
         self.customer_requests = SQLAlchemyCustomerRequestRepository(self.session)
+        self.menu_item_snapshots = (
+            SQLAlchemyMenuItemSnapshotRepository(
+                self.session
+            )
+        )
+        self.outbox = SQLAlchemyOutboxRepository(
+            self.session
+        )
+
+        self.notification_deliveries = (
+            SQLAlchemyNotificationDeliveryRepository(
+                self.session
+            )
+        )
+
+        self.processed_kafka_messages = (
+            SQLAlchemyProcessedKafkaMessageRepository(
+                self.session
+            )
+        )
+        
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:

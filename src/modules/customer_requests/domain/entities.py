@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
-from src.modules.customer_requests.domain.exceptions import CustomerRequestEmptyError, CustomerRequestInvalidPersonCountError, CustomerRequestInvalidTypeError, CustomerRequestItemInvalidCommentError, CustomerRequestItemInvalidPriceError, CustomerRequestItemInvalidQuantityError, CustomerRequestItemInvalidTitleError, CustomerRequestStatusInvalidTransition
+from src.modules.customer_requests.domain.exceptions import CustomerRequestEmptyError, CustomerRequestInvalidPersonCountError, CustomerRequestInvalidTypeError, CustomerRequestItemInvalidCommentError, CustomerRequestItemInvalidCurrencyError, CustomerRequestItemInvalidPriceError, CustomerRequestItemInvalidQuantityError, CustomerRequestItemInvalidTitleError, CustomerRequestStatusInvalidTransition
 from src.modules.customer_requests.domain.enums import CustomerRequestStatus, CustomerRequestType
 
 @dataclass(frozen=True)
@@ -16,22 +16,35 @@ class CustomerRequestItem:
     comment: str | None = None
     
     def __post_init__(self):
+        title = self.title_snapshot.strip()
+        currency = self.price_currency_snapshot.strip().upper()
+        comment = self.comment.strip() if self.comment else None
+        
         if self.quantity <= 0:
             raise CustomerRequestItemInvalidQuantityError("Quantity must be greater than zero")
         
         if self.quantity > 100:
             raise CustomerRequestItemInvalidQuantityError("Quantity cannot exceed 100")
 
-        if not self.title_snapshot.strip():
+        if not title:
             raise CustomerRequestItemInvalidTitleError("Product title snapshot cannot be empty")
-        if len(self.title_snapshot) > 255:
+        if len(title) > 255:
             raise CustomerRequestItemInvalidTitleError("Title snapshot too long (max 255)")
         
         if self.price_amount_snapshot <= 0:
             raise CustomerRequestItemInvalidPriceError("Price amount must be positive")
         
-        if self.comment is not None and len(self.comment) > 500:
+        if len(currency) != 3:
+            raise CustomerRequestItemInvalidCurrencyError(
+                "Price currency snapshot must contain three characters"
+            )
+        
+        if len(self.comment) > 500:
             raise CustomerRequestItemInvalidCommentError("Comment too long (max 500)")
+        
+        object.__setattr__(self, "title_snapshot", title)
+        object.__setattr__(self, "price_currency_snapshot", currency)
+        object.__setattr__(self, "comment", comment)
 
 
 
@@ -41,6 +54,7 @@ class CustomerRequest:
     customer_name: str
     contact: str
     desired_datetime: datetime
+    
     id: UUID = field(default_factory=uuid4)
     person_count: int | None = None
     comment: str | None = None
@@ -75,7 +89,13 @@ class CustomerRequest:
             raise CustomerRequestInvalidPersonCountError("Person count must be positive")
         if request_type == CustomerRequestType.PREORDER and not items:
             raise CustomerRequestInvalidTypeError("PREORDER requires at least one item")
-
+        if (
+            request_type != CustomerRequestType.PREORDER
+            and items
+        ):
+            raise CustomerRequestInvalidTypeError(
+                "Items are allowed only for PREORDER requests"
+            )
         # 2. Создание объекта
         return cls(
             request_type=request_type,
