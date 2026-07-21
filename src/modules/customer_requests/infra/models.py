@@ -2,7 +2,7 @@ from datetime import datetime, UTC
 from decimal import Decimal
 from uuid import UUID, uuid4
 
-from sqlalchemy import String, Integer, Numeric, DateTime, ForeignKey, Text, Index
+from sqlalchemy import CheckConstraint, String, Integer, Numeric, DateTime, ForeignKey, Text, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.shared.infra.database.base import Base
@@ -54,8 +54,22 @@ class CustomerRequestModel(Base):
     )
 
     __table_args__ = (
-        Index("ix_customer_requests_status_request_type", "status", "request_type"),
-        Index("ix_customer_requests_desired_datetime", "desired_datetime"),
+        CheckConstraint(
+            (
+                "person_count IS NULL "
+                "OR person_count BETWEEN 1 AND 500"
+            ),
+            name="ck_customer_requests_person_count",
+        ),
+        Index(
+            "ix_customer_requests_status_request_type",
+            "status",
+            "request_type",
+        ),
+        Index(
+            "ix_customer_requests_desired_datetime",
+            "desired_datetime",
+        ),
     )
 
 
@@ -91,4 +105,17 @@ class CustomerRequestItemModel(Base):
     # Обратная связь с заявкой
     customer_request: Mapped["CustomerRequestModel"] = relationship(
         back_populates="items",
+    )
+    
+    __table_args__ = (
+        CheckConstraint(
+            "quantity BETWEEN 1 AND 100",
+            name="ck_customer_request_items_quantity",
+        ),
+        CheckConstraint(
+            "price_amount_snapshot > 0",
+            name=(
+                "ck_customer_request_items_price_positive"
+            ),
+        ),
     )

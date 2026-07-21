@@ -39,7 +39,7 @@ class CustomerRequestItem:
                 "Price currency snapshot must contain three characters"
             )
         
-        if len(self.comment) > 500:
+        if comment is not None and len(self.comment) > 500:
             raise CustomerRequestItemInvalidCommentError("Comment too long (max 500)")
         
         object.__setattr__(self, "title_snapshot", title)
@@ -85,8 +85,13 @@ class CustomerRequest:
             raise CustomerRequestEmptyError("Customer name is required")
         if not contact.strip():
             raise CustomerRequestEmptyError("Contact is required")
-        if person_count is not None and person_count <= 0:
-            raise CustomerRequestInvalidPersonCountError("Person count must be positive")
+        if (
+            person_count is not None
+            and not 1 <= person_count <= 500
+        ):
+            raise CustomerRequestInvalidPersonCountError(
+                "Person count must be between 1 and 500"
+            )
         if request_type == CustomerRequestType.PREORDER and not items:
             raise CustomerRequestInvalidTypeError("PREORDER requires at least one item")
         if (

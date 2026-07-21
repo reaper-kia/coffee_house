@@ -16,7 +16,7 @@ from src.modules.customer_requests.application.commands.create_customer_request 
 
 from src.modules.customer_requests.domain.enums import CustomerRequestStatus, CustomerRequestType
 from src.modules.customer_requests.domain.exceptions import (
-    MenuItemUnavailable,
+    CustomerRequestException,
 )
 
 from .dependencies import get_customer_requests_mediator
@@ -30,7 +30,7 @@ router = APIRouter(prefix="/customer-requests", tags=["Customer Requests"])
 
 
 @router.post(
-    "/",
+    "",
     response_model=CustomerRequestResponse,
     status_code=status.HTTP_201_CREATED,
 )
@@ -63,7 +63,7 @@ async def create_customer_request(
 
     try:
         request_entity = await mediator.send(command)
-    except (MenuItemUnavailable) as e:
+    except CustomerRequestException as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=str(e),

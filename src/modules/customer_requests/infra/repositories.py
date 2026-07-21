@@ -52,44 +52,33 @@ class SQLAlchemyCustomerRequestRepository(CustomerRequestRepository):
             return None
         return self._to_domain(model)
 
-    async def save(self, request: CustomerRequest) -> None:
-        """Обновить существующую заявку (UPDATE)."""
-        # 1. Загружаем модель с её items
-        stmt = (
-            select(CustomerRequestModel)
-            .where(CustomerRequestModel.id == request.id)
-            .options(selectinload(CustomerRequestModel.items))
+    async def save(
+        self,
+        request: CustomerRequest,
+    ) -> None:
+        model = await self.session.get(
+            CustomerRequestModel,
+            request.id,
         )
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
+    
         if model is None:
             raise CustomerRequestNotFound(
                 f"Customer request {request.id} not found"
             )
-
-        # 2. Обновляем простые поля
+    
         model.request_type = request.request_type.value
         model.customer_name = request.customer_name
         model.contact = request.contact
-        model.telegram_chat_id = request.telegram_chat_id
-        model.desired_datetime = request.desired_datetime
+        model.telegram_chat_id = (
+            request.telegram_chat_id
+        )
+        model.desired_datetime = (
+            request.desired_datetime
+        )
         model.person_count = request.person_count
         model.comment = request.comment
         model.status = request.status.value
         model.updated_at = request.updated_at
-
-        # 3. Обновляем items (удаляем старые, добавляем новые)
-        model.items.clear()
-        for item in request.items:
-            item_model = CustomerRequestItemModel(
-                menu_item_id=item.menu_item_id,
-                title_snapshot=item.title_snapshot,
-                price_amount_snapshot=item.price_amount_snapshot,
-                price_currency_snapshot=item.price_currency_snapshot,
-                quantity=item.quantity,
-                comment=item.comment,
-            )
-            model.items.append(item_model)
 
     # ---------- Вспомогательные мапперы ----------
     @staticmethod

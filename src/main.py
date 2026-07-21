@@ -13,6 +13,9 @@ from src.modules.catalog.api.router import (
     router as catalog_router,
     admin_router as catalog_admin_router,
 )
+from src.modules.customer_requests.api.router import (
+    router as customer_requests_router,
+)
 
 from src.shared.infra.database.health import check_database_connection
 from src.shared.infra.database.session import get_async_session
@@ -38,7 +41,8 @@ def create_app() -> FastAPI:
     app.include_router(admin_router)
     app.include_router(catalog_router, prefix="/api/v1")
     app.include_router(catalog_admin_router, prefix="/api/v1")
-
+    app.include_router(customer_requests_router, prefix="/api/v1",)
+    
     @app.get("/health")
     async def health_check() -> dict[str, str]:
         return {"status": "success"}

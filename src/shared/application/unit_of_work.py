@@ -1,6 +1,8 @@
 from typing import Protocol
 
 
+from src.modules.customer_requests.application.ports.customer_request_repository import CustomerRequestRepository
+from src.modules.customer_requests.application.ports.menu_item_snapshot_repository import MenuItemSnapshotRepository
 from src.modules.catalog.application.ports.menu_category_repository import MenuCategoryRepository
 from src.modules.catalog.application.ports.menu_item_repository import MenuItemRepository
 from src.modules.notifications.application.ports.notification_delivery_repository import NotificationDeliveryRepository
@@ -18,6 +20,9 @@ class UnitOfWork(Protocol):
 
     menu_categories: MenuCategoryRepository
     menu_items: MenuItemRepository
+    
+    customer_requests: CustomerRequestRepository
+    menu_item_snapshots: MenuItemSnapshotRepository
     
     async def __aenter__(self) -> "UnitOfWork":
         ...

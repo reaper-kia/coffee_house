@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
+from src.modules.customer_requests.infra.repositories import SQLAlchemyCustomerRequestRepository, SQLAlchemyMenuItemSnapshotRepository
 from src.modules.catalog.infra.repositories import SQLAlchemyMenuCategoryRepository, SQLAlchemyMenuItemRepository
 from src.modules.notifications.infra.repositories import SQLAlchemyNotificationDeliveryRepository, SQLAlchemyProcessedKafkaMessageRepository
 from src.shared.outbox.infra.repositories import SQLAlchemyOutboxRepository
@@ -20,6 +21,9 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         
         self.menu_categories = SQLAlchemyMenuCategoryRepository(self.session)
         self.menu_items = SQLAlchemyMenuItemRepository(self.session)
+        
+        self.customer_requests = SQLAlchemyCustomerRequestRepository(self.session)
+        self.menu_item_snapshots = SQLAlchemyMenuItemSnapshotRepository(self.session)
         
         return self
 

@@ -22,7 +22,10 @@ from src.modules.catalog.infra.models import (
     MenuCategoryModel,
     MenuItemModel,
 )
-
+from src.modules.customer_requests.infra.models import (
+    CustomerRequestItemModel,
+    CustomerRequestModel,
+)
 
 config = context.config
 
