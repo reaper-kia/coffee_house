@@ -1,3 +1,5 @@
+# ruff: noqa: F401
+
 from logging.config import fileConfig
 
 from alembic import context
@@ -6,9 +8,6 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.core.config import settings
 from src.shared.infra.database.base import Base
-from src.modules.catalog.infra import models as catalog_models
-from src.modules.customer_requests.infra import models as customers_request_models
-
 
 # ВАЖНО:
 # здесь потом нужно импортировать ORM-модели,
@@ -17,6 +16,12 @@ from src.modules.customer_requests.infra import models as customers_request_mode
 # from src.modules.catalog.infra.models import ServiceModel
 # from src.modules.consumers_request.infra.models import ConsumerRequestModel
 from src.modules.users.infra.models import UserModel  # noqa: F401
+from src.shared.outbox.infra.models import OutboxMessageModel  # noqa: F401
+from src.modules.notifications.infra.models import NotificationDeliveryModel, ProcessedKafkaMessageModel  # noqa: F401
+from src.modules.catalog.infra.models import (
+    MenuCategoryModel,
+    MenuItemModel,
+)
 
 
 config = context.config

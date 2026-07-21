@@ -1,12 +1,10 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
+from src.modules.catalog.infra.repositories import SQLAlchemyMenuCategoryRepository, SQLAlchemyMenuItemRepository
+from src.modules.notifications.infra.repositories import SQLAlchemyNotificationDeliveryRepository, SQLAlchemyProcessedKafkaMessageRepository
+from src.shared.outbox.infra.repositories import SQLAlchemyOutboxRepository
 from src.modules.users.infra.repositories import SQLAlchemyUserRepository
-from src.modules.catalog.infra.repositories import (
-    SQLAlchemyMenuCategoryRepository,
-    SQLAlchemyMenuItemRepository,
-)
 from src.shared.application.unit_of_work import UnitOfWork
-from src.modules.customer_requests.infra.repositories import SQLAlchemyCustomerRequestRepository
 
 
 class SQLAlchemyUnitOfWork(UnitOfWork):
@@ -16,29 +14,12 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
     async def __aenter__(self) -> "SQLAlchemyUnitOfWork":
         self.session = self._session_factory()
         self.users = SQLAlchemyUserRepository(self.session)
+        self.outbox = SQLAlchemyOutboxRepository(self.session)
+        self.notification_deliveries = SQLAlchemyNotificationDeliveryRepository(self.session)
+        self.processed_kafka_messages = SQLAlchemyProcessedKafkaMessageRepository(self.session)
+        
         self.menu_categories = SQLAlchemyMenuCategoryRepository(self.session)
         self.menu_items = SQLAlchemyMenuItemRepository(self.session)
-        self.customer_requests = SQLAlchemyCustomerRequestRepository(self.session)
-        self.menu_item_snapshots = (
-            SQLAlchemyMenuItemSnapshotRepository(
-                self.session
-            )
-        )
-        self.outbox = SQLAlchemyOutboxRepository(
-            self.session
-        )
-
-        self.notification_deliveries = (
-            SQLAlchemyNotificationDeliveryRepository(
-                self.session
-            )
-        )
-
-        self.processed_kafka_messages = (
-            SQLAlchemyProcessedKafkaMessageRepository(
-                self.session
-            )
-        )
         
         return self
 
