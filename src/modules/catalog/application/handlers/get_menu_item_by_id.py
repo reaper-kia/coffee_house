@@ -1,5 +1,3 @@
-from typing import Optional
-from uuid import UUID
 from src.modules.catalog.application.ports.menu_read_repositories import MenuItemReadRepository
 from src.modules.catalog.application.read_models import MenuItemReadModel
 from src.modules.catalog.domain.exceptions import MenuItemNotFoundError

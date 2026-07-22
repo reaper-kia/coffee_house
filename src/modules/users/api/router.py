@@ -84,8 +84,8 @@ async def get_me(
 
     return UserResponse(
         id=user.id,
-        name=user.name.value,
-        email=user.email.value,
+        name=user.name,
+        email=user.email,
         is_admin=user.is_admin,
     )
 

@@ -1,4 +1,3 @@
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 # Предполагаем, что фабрика сессий определена в shared/infra/database/session.py
 from src.shared.infra.database.unit_of_work import SQLAlchemyUnitOfWork

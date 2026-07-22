@@ -160,7 +160,7 @@ class SQLAlchemyMenuCategoryReadRepository:
             MenuCategoryModel.is_active,
         )
         if active_only:
-            stmt = stmt.where(MenuCategoryModel.is_active == True)
+            stmt = stmt.where(MenuCategoryModel.is_active.is_(True))
         stmt = stmt.order_by(
             MenuCategoryModel.position,
             MenuCategoryModel.title,
@@ -208,7 +208,7 @@ class SQLAlchemyMenuItemReadRepository:
         if category_id is not None:
             stmt = stmt.where(MenuItemModel.category_id == category_id)
         if available_only:
-            stmt = stmt.where(MenuItemModel.is_available == True)
+            stmt = stmt.where(MenuItemModel.is_available.is_(True))
         if search:
             search_pattern = f"%{search}%"
             stmt = stmt.where(

@@ -1,4 +1,4 @@
-from typing import Protocol, Optional, List
+from typing import Protocol, Optional
 from uuid import UUID
 from src.modules.catalog.domain.entities import MenuItem
 

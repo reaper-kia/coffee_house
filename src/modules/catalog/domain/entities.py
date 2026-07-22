@@ -53,6 +53,12 @@ class MenuItem:
     def change_image_url(self, new_image_url: str | None) -> None:
         self.image_url = new_image_url
 
+    def change_position(
+        self,
+        new_position: Position,
+    ) -> None:
+        self.position = new_position
+    
     def mark_available(self) -> None:
         self.is_available = True
 

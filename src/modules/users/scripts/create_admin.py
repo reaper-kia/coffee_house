@@ -31,7 +31,7 @@ async def create_admin(
 
             print(
                 "User with this email already exists "
-                f"and is not admin"
+                "and is not admin"
             )
             print("Refusing to promote existing user from bootstrap script.")
             return 1

@@ -14,7 +14,6 @@ from src.modules.customer_requests.application.commands.create_customer_request 
     CreateCustomerRequestItem,
 )
 
-from src.modules.customer_requests.domain.enums import CustomerRequestStatus, CustomerRequestType
 from src.modules.customer_requests.domain.exceptions import (
     CustomerRequestException,
 )

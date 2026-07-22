@@ -48,12 +48,15 @@ class SQLAlchemyUserRepository(UserRepository):
     
     
     @staticmethod
-    def _to_domain(user_model: UserModel):
+    def _to_domain(
+        user_model: UserModel,
+    ) -> User:
         return User(
             id=user_model.id,
             name=UserName(user_model.name),
             email=Email(user_model.email),
             password_hash=user_model.password_hash,
+            is_admin=user_model.is_admin,
         )
 
 class SQLAlchemyUserReadRepository(UserReadRepository):

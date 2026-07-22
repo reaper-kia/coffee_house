@@ -1,7 +1,5 @@
-from fastapi import Depends
 from redis.asyncio import Redis
 
-from src.core.config import settings
 from src.shared.infra.redis.client import redis_client
 
 def get_redis_client() -> Redis:

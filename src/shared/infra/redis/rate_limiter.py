@@ -37,7 +37,7 @@ class RedisFixedWindowRateLimiter:
             else:
                 attempts = int(await self.redis.incr(redis_key))
 
-            if attempts < limit:
+            if attempts <= limit:
                 return RateLimitResult(
                     allowed=True,
                     attempts=attempts,

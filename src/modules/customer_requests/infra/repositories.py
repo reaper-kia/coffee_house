@@ -1,7 +1,6 @@
 # src/modules/customer_requests/infra/repositories.py
 
 from uuid import UUID
-from decimal import Decimal
 
 from sqlalchemy import select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession

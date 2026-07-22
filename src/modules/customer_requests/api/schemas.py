@@ -13,7 +13,6 @@ from src.modules.customer_requests.domain.enums import (
 from src.modules.customer_requests.domain.entities import CustomerRequest
 from src.modules.customer_requests.application.read_models import (
     CustomerRequestReadModel,
-    CustomerRequestItemReadModel,
 )
 
 

@@ -1,5 +1,4 @@
 import uuid
-from xmlrpc.client import Boolean
 
 from sqlalchemy import String, Boolean, Column
 from sqlalchemy.orm import Mapped, mapped_column

@@ -17,6 +17,7 @@ from src.modules.catalog.api.schemas import (
     ChangeAvailabilityRequest,
     category_to_response,
     menu_item_to_response,
+    menu_item_read_model_to_response,
 )
 from src.modules.catalog.application.queries.get_categories import GetCategoriesQuery
 from src.modules.catalog.application.queries.get_menu_items import GetMenuItemsQuery
@@ -83,7 +84,7 @@ async def get_menu_item(
         item = await mediator.send(query)
     except MenuItemNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    return menu_item_to_response(item)
+    return menu_item_read_model_to_response(item)
 
 
 # ============================================

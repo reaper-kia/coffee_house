@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from enum import StrEnum
 
 from src.modules.users.domain.exceptions import InvalidEmailError, InvalidUserNameError, WeakPasswordError
 
