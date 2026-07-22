@@ -80,10 +80,18 @@ async def test_create_preorder_uses_snapshots_and_commits_once() -> None:
     snapshot_repo = SimpleNamespace(
         get_available_by_ids=AsyncMock(return_value={ITEM_ID: snapshot})
     )
-    request_repo = SimpleNamespace(add=AsyncMock())
+    request_repo = SimpleNamespace(
+        add=AsyncMock(),
+    )
+
+    outbox_repo = SimpleNamespace(
+        add=AsyncMock(),
+    )
+
     uow = FakeUoW(
         menu_item_snapshots=snapshot_repo,
         customer_requests=request_repo,
+        outbox=outbox_repo,
     )
     factory = FakeUoWFactory(uow)
     handler = CreateCustomerRequestHandler(factory)
@@ -105,6 +113,7 @@ async def test_create_preorder_uses_snapshots_and_commits_once() -> None:
     assert result.items[0].title_snapshot == "Latte"
     assert result.items[0].price_amount_snapshot == Decimal("4.50")
     request_repo.add.assert_awaited_once_with(result)
+    outbox_repo.add.assert_awaited_once()
     uow.commit.assert_awaited_once()
 
 

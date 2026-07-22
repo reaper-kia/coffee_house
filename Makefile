@@ -35,8 +35,8 @@ shell:
 	docker compose exec app bash
 
 db-shell:
-	docker compose exec db psql -U marketplace -d marketplace
-
+	docker compose exec db sh -c \
+		'psql -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"'
 test:
 	docker compose exec app pytest
 

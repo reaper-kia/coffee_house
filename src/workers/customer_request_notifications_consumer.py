@@ -42,9 +42,14 @@ async def process_message_with_retries(
     dlq_producer: KafkaEventProducer,
     message: KafkaConsumedMessage,
 ) -> None:
-    max_attempts = settings.kafka_consumer_max_attempts
-    retry_delay_seconds = settings.kafka_consumer_retry_delay_seconds
-    
+    max_attempts = (
+        settings.kafka_consumer_max_attempts
+    )
+    retry_delay_seconds = (
+        settings.kafka_consumer_retry_delay_seconds
+    )
+
+    last_error: BaseException | None = None
     try:
         await handler.handle(message)
         return
@@ -66,7 +71,19 @@ async def process_message_with_retries(
         )
         return
     
-    last_error: BaseException | None = None
+    except Exception as exc:
+        last_error = exc
+
+        logger.warning(
+            "Kafka message processing attempt failed. "
+            "attempt=1/%s topic=%s partition=%s "
+            "offset=%s error=%s",
+            max_attempts,
+            message.topic,
+            message.partition,
+            message.offset,
+            exc,
+        )
     
     for attempt in range(2, max_attempts + 1):
         try:

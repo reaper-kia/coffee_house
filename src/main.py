@@ -5,6 +5,7 @@ from fastapi import Depends, FastAPI
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from fastapi.middleware.cors import CORSMiddleware
 # Импорт роутеров модулей
 from src.modules.users.api.router import router as users_router
 from src.modules.auth.api.router import router as auth_router
@@ -34,6 +35,18 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Coffee House",
         lifespan=lifespan,
+    )
+    
+    
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     app.include_router(users_router)
