@@ -1,4 +1,4 @@
-.PHONY: up down down-v build restart logs ps shell db-shell test lint format tree migration migrate downgrade
+.PHONY: up down down-v build restart logs ps shell db-shell test lint format tree migration migrate downgrade cert
 
 migration:
 	docker compose exec app alembic revision --autogenerate -m "$(name)"
@@ -48,3 +48,10 @@ format:
 
 tree:
 	tree -I "__pycache__|.git|.venv|venv|.pytest_cache|.mypy_cache|.ruff_cache"
+
+cert:
+	openssl req -x509 -newkey rsa:2048 -sha256 -noenc \
+		-keyout certs/localhost.key \
+		-out certs/localhost.crt \
+		-days 365 \
+		-config certs/openssl.cnf

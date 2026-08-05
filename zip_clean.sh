@@ -23,6 +23,8 @@ rsync -av ./ "$TMP_DIR" \
   --exclude ".coverage" \
   --exclude "htmlcov" \
   --exclude ".env" \
+  --include ".env.example" \
+  --include ".env.*.example" \
   --exclude ".env.*" \
   --exclude "*.log" \
   --exclude "logs" \

@@ -51,5 +51,6 @@ build/
 dist/
 *.egg-info/
 
+/certs/
 # Project generated files
 project-tree.txt
