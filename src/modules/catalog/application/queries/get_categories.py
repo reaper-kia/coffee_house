@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class GetCategoriesQuery:
     active_only: bool = True

@@ -4,7 +4,6 @@ from uuid import UUID, uuid4
 from src.modules.users.domain.value_objects import Email, UserName
 
 
-
 @dataclass
 class User:
     name: UserName
@@ -13,7 +12,6 @@ class User:
     is_admin: bool = False
     id: UUID = field(default_factory=uuid4)
 
-    
     @classmethod
     def register(
         cls,

@@ -1,16 +1,16 @@
 """create services table
 
 Revision ID: c71176e91e84
-Revises: 
+Revises:
 Create Date: 2026-06-30 14:17:10.683197
 
 """
+
 from typing import Sequence, Union
 
 
-
 # revision identifiers, used by Alembic.
-revision: str = 'c71176e91e84'
+revision: str = "c71176e91e84"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

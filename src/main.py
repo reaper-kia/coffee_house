@@ -6,6 +6,7 @@ from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi.middleware.cors import CORSMiddleware
+
 # Импорт роутеров модулей
 from src.modules.users.api.router import router as users_router
 from src.modules.auth.api.router import router as auth_router
@@ -36,8 +37,7 @@ def create_app() -> FastAPI:
         title="Coffee House",
         lifespan=lifespan,
     )
-    
-    
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[
@@ -54,8 +54,11 @@ def create_app() -> FastAPI:
     app.include_router(admin_router)
     app.include_router(catalog_router, prefix="/api/v1")
     app.include_router(catalog_admin_router, prefix="/api/v1")
-    app.include_router(customer_requests_router, prefix="/api/v1",)
-    
+    app.include_router(
+        customer_requests_router,
+        prefix="/api/v1",
+    )
+
     @app.get("/health")
     async def health_check() -> dict[str, str]:
         return {"status": "success"}

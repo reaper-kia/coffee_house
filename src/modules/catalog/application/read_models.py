@@ -2,12 +2,14 @@ from dataclasses import dataclass
 from uuid import UUID
 from decimal import Decimal
 
+
 @dataclass
 class CategoryReadModel:
     id: UUID
     title: str
     position: int
     is_active: bool
+
 
 @dataclass
 class MenuItemReadModel:

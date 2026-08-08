@@ -12,7 +12,11 @@ from src.modules.customer_requests.domain.exceptions import (
     CustomerRequestNotFound,
     CustomerRequestStatusInvalidTransition,
 )
-from tests.factories import REQUEST_ID, customer_request_entity, customer_request_read_model
+from tests.factories import (
+    REQUEST_ID,
+    customer_request_entity,
+    customer_request_read_model,
+)
 from tests.fakes import StubMediator
 
 

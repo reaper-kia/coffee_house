@@ -20,8 +20,10 @@ from src.modules.customer_requests.application.read_models import (
 # Запросы (Request DTO)
 # ============================================
 
+
 class CustomerRequestItemCreate(BaseModel):
     """Один товар в заявке (при создании)."""
+
     menu_item_id: UUID
     quantity: int = Field(ge=1, le=100)
     comment: str | None = Field(default=None, max_length=500)
@@ -29,6 +31,7 @@ class CustomerRequestItemCreate(BaseModel):
 
 class CreateCustomerRequestRequest(BaseModel):
     """Запрос на создание заявки (публичный, без JWT)."""
+
     request_type: CustomerRequestType
     customer_name: str = Field(min_length=1, max_length=255)
     contact: str = Field(min_length=1, max_length=255)
@@ -50,8 +53,10 @@ class CreateCustomerRequestRequest(BaseModel):
 # Ответы (Response DTO)
 # ============================================
 
+
 class CustomerRequestItemResponse(BaseModel):
     """Товар в заявке (в ответе)."""
+
     menu_item_id: UUID
     title: str
     quantity: int
@@ -62,6 +67,7 @@ class CustomerRequestItemResponse(BaseModel):
 
 class CustomerRequestResponse(BaseModel):
     """Полная заявка (в ответе)."""
+
     id: UUID
     request_type: CustomerRequestType
     customer_name: str
@@ -78,6 +84,7 @@ class CustomerRequestResponse(BaseModel):
 
 class CustomerRequestPageResponse(BaseModel):
     """Ответ со списком заявок и пагинацией."""
+
     items: list[CustomerRequestResponse]
     total: int
     page: int
@@ -87,6 +94,7 @@ class CustomerRequestPageResponse(BaseModel):
 # ============================================
 # Мапперы (преобразование домена/read-модели -> Response)
 # ============================================
+
 
 def customer_request_to_response(
     entity: CustomerRequest,

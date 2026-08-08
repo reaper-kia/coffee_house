@@ -8,5 +8,6 @@ redis_client = Redis.from_url(
     decode_responses=True,
 )
 
+
 async def close_redis_client() -> None:
     await redis_client.aclose()

@@ -65,10 +65,12 @@ from src.modules.customer_requests.application.handlers.get_customer_request_by_
 # 1. Фабрики write-репозиториев
 # ============================================================================
 
+
 async def get_customer_request_repository(
     session: AsyncSession = Depends(get_async_session),
 ) -> CustomerRequestRepository:
     return SQLAlchemyCustomerRequestRepository(session)
+
 
 async def get_menu_item_snapshot_repository(
     session: AsyncSession = Depends(get_async_session),
@@ -80,6 +82,7 @@ async def get_menu_item_snapshot_repository(
 # 2. Фабрика read-репозитория
 # ============================================================================
 
+
 async def get_customer_request_read_repository(
     session: AsyncSession = Depends(get_async_session),
 ) -> CustomerRequestReadRepository:
@@ -90,10 +93,12 @@ async def get_customer_request_read_repository(
 # 3. Фабрики командных хендлеров (write) – используют UoW
 # ============================================================================
 
+
 async def get_create_customer_request_handler(
     uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
 ) -> CreateCustomerRequestHandler:
     return CreateCustomerRequestHandler(uow_factory)
+
 
 async def get_change_customer_request_status_handler(
     uow_factory: UnitOfWorkFactory = Depends(get_unit_of_work_factory),
@@ -105,13 +110,19 @@ async def get_change_customer_request_status_handler(
 # 4. Фабрики query-хендлеров (чтение) – используют read-репозиторий
 # ============================================================================
 
+
 async def get_list_customer_requests_handler(
-    read_repo: CustomerRequestReadRepository = Depends(get_customer_request_read_repository),
+    read_repo: CustomerRequestReadRepository = Depends(
+        get_customer_request_read_repository
+    ),
 ) -> ListCustomerRequestsHandler:
     return ListCustomerRequestsHandler(read_repo)
 
+
 async def get_customer_request_by_id_handler(
-    read_repo: CustomerRequestReadRepository = Depends(get_customer_request_read_repository),
+    read_repo: CustomerRequestReadRepository = Depends(
+        get_customer_request_read_repository
+    ),
 ) -> GetCustomerRequestByIdHandler:
     return GetCustomerRequestByIdHandler(read_repo)
 
@@ -120,11 +131,20 @@ async def get_customer_request_by_id_handler(
 # 5. Медиатор (регистрация всех команд и запросов)
 # ============================================================================
 
+
 async def get_customer_requests_mediator(
-    create_handler: CreateCustomerRequestHandler = Depends(get_create_customer_request_handler),
-    change_status_handler: ChangeCustomerRequestStatusHandler = Depends(get_change_customer_request_status_handler),
-    list_handler: ListCustomerRequestsHandler = Depends(get_list_customer_requests_handler),
-    get_by_id_handler: GetCustomerRequestByIdHandler = Depends(get_customer_request_by_id_handler),
+    create_handler: CreateCustomerRequestHandler = Depends(
+        get_create_customer_request_handler
+    ),
+    change_status_handler: ChangeCustomerRequestStatusHandler = Depends(
+        get_change_customer_request_status_handler
+    ),
+    list_handler: ListCustomerRequestsHandler = Depends(
+        get_list_customer_requests_handler
+    ),
+    get_by_id_handler: GetCustomerRequestByIdHandler = Depends(
+        get_customer_request_by_id_handler
+    ),
 ) -> Mediator:
     mediator = Mediator()
 

@@ -9,19 +9,19 @@ from src.shared.events.customer_request_event import CUSTOMER_REQUEST_STATUS_CHA
 class CustomerRequestMessageBuilder:
     def build(self, *, event: dict[str, Any]) -> str | None:
         event_type = event["event_type"]
-        
+
         if event_type != CUSTOMER_REQUEST_STATUS_CHANGED:
             return None
-        
+
         payload = event["payload"]
         new_status = payload["new_status"]
-        
+
         if new_status == CustomerRequestStatus.CONFIRMED.value:
             return self._build_confirmed_message(payload)
-        
+
         if new_status == CustomerRequestStatus.CANCELLED.value:
             return self._build_cancelled_message(payload)
-        
+
         return None
 
     def _build_confirmed_message(self, payload: dict[str, Any]) -> str:
@@ -42,7 +42,7 @@ class CustomerRequestMessageBuilder:
             f"Комментарий: {payload.get('comment') or '-'}\n\n"
             "Вы можете создать новую заявку на другое время."
         )
-    
+
     def _format_request_type(self, request_type: str) -> str:
         if request_type == "TABLE_BOOKING":
             return "бронь столика"

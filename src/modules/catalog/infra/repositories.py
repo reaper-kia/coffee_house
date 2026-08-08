@@ -15,14 +15,19 @@ from src.modules.catalog.domain.value_objects import (
 )
 
 
-
-from src.modules.catalog.application.ports.menu_category_repository import MenuCategoryRepository
-from src.modules.catalog.application.ports.menu_item_repository import MenuItemRepository
+from src.modules.catalog.application.ports.menu_category_repository import (
+    MenuCategoryRepository,
+)
+from src.modules.catalog.application.ports.menu_item_repository import (
+    MenuItemRepository,
+)
 
 
 from src.modules.catalog.infra.models import MenuItemModel, MenuCategoryModel
-from src.modules.catalog.application.read_models import CategoryReadModel, MenuItemReadModel
-
+from src.modules.catalog.application.read_models import (
+    CategoryReadModel,
+    MenuItemReadModel,
+)
 
 
 class SQLAlchemyMenuCategoryRepository(MenuCategoryRepository):
@@ -161,10 +166,14 @@ class SQLAlchemyMenuCategoryReadRepository:
         )
         if active_only:
             stmt = stmt.where(MenuCategoryModel.is_active.is_(True))
-        stmt = stmt.order_by(
-            MenuCategoryModel.position,
-            MenuCategoryModel.title,
-        ).limit(limit).offset(offset)
+        stmt = (
+            stmt.order_by(
+                MenuCategoryModel.position,
+                MenuCategoryModel.title,
+            )
+            .limit(limit)
+            .offset(offset)
+        )
         result = await self.session.execute(stmt)
         rows = result.all()
         return [
@@ -202,8 +211,7 @@ class SQLAlchemyMenuItemReadRepository:
             MenuItemModel.is_available,
             MenuItemModel.position,
         ).outerjoin(
-            MenuCategoryModel,
-            MenuItemModel.category_id == MenuCategoryModel.id
+            MenuCategoryModel, MenuItemModel.category_id == MenuCategoryModel.id
         )
         if category_id is not None:
             stmt = stmt.where(MenuItemModel.category_id == category_id)
@@ -217,11 +225,15 @@ class SQLAlchemyMenuItemReadRepository:
                     MenuItemModel.description.ilike(search_pattern),
                 )
             )
-        stmt = stmt.order_by(
-            MenuCategoryModel.position,
-            MenuItemModel.position,
-            MenuItemModel.title,
-        ).limit(limit).offset(offset)
+        stmt = (
+            stmt.order_by(
+                MenuCategoryModel.position,
+                MenuItemModel.position,
+                MenuItemModel.title,
+            )
+            .limit(limit)
+            .offset(offset)
+        )
         result = await self.session.execute(stmt)
         rows = result.all()
         return [
@@ -241,21 +253,24 @@ class SQLAlchemyMenuItemReadRepository:
         ]
 
     async def get_by_id(self, menu_item_id: UUID) -> Optional[MenuItemReadModel]:
-        stmt = select(
-            MenuItemModel.id,
-            MenuItemModel.category_id,
-            MenuCategoryModel.title.label("category_title"),
-            MenuItemModel.title,
-            MenuItemModel.description,
-            MenuItemModel.price_amount,
-            MenuItemModel.price_currency,
-            MenuItemModel.image_url,
-            MenuItemModel.is_available,
-            MenuItemModel.position,
-        ).outerjoin(
-            MenuCategoryModel,
-            MenuItemModel.category_id == MenuCategoryModel.id
-        ).where(MenuItemModel.id == menu_item_id)
+        stmt = (
+            select(
+                MenuItemModel.id,
+                MenuItemModel.category_id,
+                MenuCategoryModel.title.label("category_title"),
+                MenuItemModel.title,
+                MenuItemModel.description,
+                MenuItemModel.price_amount,
+                MenuItemModel.price_currency,
+                MenuItemModel.image_url,
+                MenuItemModel.is_available,
+                MenuItemModel.position,
+            )
+            .outerjoin(
+                MenuCategoryModel, MenuItemModel.category_id == MenuCategoryModel.id
+            )
+            .where(MenuItemModel.id == menu_item_id)
+        )
         result = await self.session.execute(stmt)
         row = result.one_or_none()
         if row is None:

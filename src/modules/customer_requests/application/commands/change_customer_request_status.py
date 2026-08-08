@@ -8,4 +8,4 @@ from src.modules.customer_requests.domain.enums import CustomerRequestStatus
 class ChangeCustomerRequestStatusCommand:
     request_id: UUID
     new_status: CustomerRequestStatus
-    changed_by_admin_id: UUID 
+    changed_by_admin_id: UUID

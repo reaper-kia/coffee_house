@@ -2,6 +2,7 @@ from src.modules.catalog.domain.exceptions import MenuItemNotFoundError
 from src.shared.application.unit_of_work import UnitOfWorkFactory
 from ..commands.delete_menu_item import DeleteMenuItemCommand
 
+
 class DeleteMenuItemHandler:
     def __init__(self, uow_factory: UnitOfWorkFactory):
         self.uow_factory = uow_factory

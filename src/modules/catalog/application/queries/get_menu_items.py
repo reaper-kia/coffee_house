@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 from typing import Optional
 
+
 @dataclass
 class GetMenuItemsQuery:
     category_id: Optional[UUID] = None

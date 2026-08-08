@@ -1,4 +1,3 @@
-
 import pytest
 
 from src.modules.auth.api.dependencies import require_admin
@@ -109,7 +108,9 @@ async def test_admin_creates_category(app, client, admin_user) -> None:
 
 @pytest.mark.api
 @pytest.mark.asyncio
-async def test_admin_create_item_maps_category_not_found(app, client, admin_user) -> None:
+async def test_admin_create_item_maps_category_not_found(
+    app, client, admin_user
+) -> None:
     app.dependency_overrides[require_admin] = lambda: admin_user
     app.dependency_overrides[get_catalog_mediator] = lambda: StubMediator(
         error=CategoryNotFoundError("Category not found")

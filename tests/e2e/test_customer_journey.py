@@ -16,7 +16,10 @@ from src.modules.catalog.application.commands.create_menu_item import (
 )
 from src.modules.catalog.application.queries.get_categories import GetCategoriesQuery
 from src.modules.catalog.application.queries.get_menu_items import GetMenuItemsQuery
-from src.modules.catalog.application.read_models import CategoryReadModel, MenuItemReadModel
+from src.modules.catalog.application.read_models import (
+    CategoryReadModel,
+    MenuItemReadModel,
+)
 from src.modules.catalog.domain.entities import MenuCategory, MenuItem
 from src.modules.catalog.domain.value_objects import (
     CategoryTitle,

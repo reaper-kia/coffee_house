@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.core.config import settings   # <-- импортируем настройки
+from src.core.config import settings  # <-- импортируем настройки
 from src.modules.users.application.commands.register_user import RegisterUserCommand
 from src.modules.users.application.ports.password_hasher import PasswordHasher
 from src.modules.users.domain.entities import User

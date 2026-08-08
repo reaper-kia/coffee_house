@@ -16,6 +16,8 @@ class MenuItemSnapshotRepository(ABC):
     """Порт для получения снапшотов товаров из каталога."""
 
     @abstractmethod
-    async def get_available_by_ids(self, menu_item_ids: set[UUID]) -> dict[UUID, ProductSnapshot]:
+    async def get_available_by_ids(
+        self, menu_item_ids: set[UUID]
+    ) -> dict[UUID, ProductSnapshot]:
         """Вернуть словарь {menu_item_id: ProductSnapshot} для доступных товаров."""
         pass

@@ -10,7 +10,7 @@ async def check_kafka_connection(
         bootstrap_servers=bootstrap_servers,
         client_id=client_id,
     )
-    
+
     try:
         await producer.start()
         return True

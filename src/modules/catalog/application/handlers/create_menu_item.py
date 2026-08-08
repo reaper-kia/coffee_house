@@ -5,6 +5,7 @@ from src.shared.application.unit_of_work import UnitOfWorkFactory
 from ..commands.create_menu_item import CreateMenuItemCommand
 from src.shared.domain.value_objects import Money
 
+
 class CreateMenuItemHandler:
     def __init__(self, uow_factory: UnitOfWorkFactory):
         self.uow_factory = uow_factory
@@ -15,16 +16,10 @@ class CreateMenuItemHandler:
     ) -> MenuItem:
         async with self.uow_factory() as uow:
             if cmd.category_id is not None:
-                exists = (
-                    await uow.menu_categories.exists_by_id(
-                        cmd.category_id
-                    )
-                )
+                exists = await uow.menu_categories.exists_by_id(cmd.category_id)
 
                 if not exists:
-                    raise CategoryNotFoundError(
-                        f"Category {cmd.category_id} not found"
-                    )
+                    raise CategoryNotFoundError(f"Category {cmd.category_id} not found")
 
             item = MenuItem.create(
                 title=ProductTitle(cmd.title),
@@ -32,9 +27,7 @@ class CreateMenuItemHandler:
                     cmd.price_amount,
                     cmd.price_currency,
                 ),
-                description=Description(
-                    cmd.description
-                ),
+                description=Description(cmd.description),
                 is_available=cmd.is_available,
                 category_id=cmd.category_id,
                 image_url=cmd.image_url,

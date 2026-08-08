@@ -6,7 +6,10 @@ from src.modules.customer_requests.application.read_models import (
     CustomerRequestReadModel,
     CustomerRequestPageReadModel,
 )
-from src.modules.customer_requests.domain.enums import CustomerRequestStatus, CustomerRequestType
+from src.modules.customer_requests.domain.enums import (
+    CustomerRequestStatus,
+    CustomerRequestType,
+)
 
 
 class CustomerRequestReadRepository(ABC):

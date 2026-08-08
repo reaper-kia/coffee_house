@@ -1,6 +1,10 @@
 from typing import Protocol, List, Optional
 from uuid import UUID
-from src.modules.catalog.application.read_models import CategoryReadModel, MenuItemReadModel
+from src.modules.catalog.application.read_models import (
+    CategoryReadModel,
+    MenuItemReadModel,
+)
+
 
 class MenuCategoryReadRepository(Protocol):
     async def list_categories(
@@ -8,8 +12,8 @@ class MenuCategoryReadRepository(Protocol):
         active_only: bool = True,
         limit: int = 100,
         offset: int = 0,
-    ) -> List[CategoryReadModel]:
-        ...
+    ) -> List[CategoryReadModel]: ...
+
 
 class MenuItemReadRepository(Protocol):
     async def list_menu_items(
@@ -19,8 +23,6 @@ class MenuItemReadRepository(Protocol):
         search: str | None = None,
         limit: int = 50,
         offset: int = 0,
-    ) -> List[MenuItemReadModel]:
-        ...
+    ) -> List[MenuItemReadModel]: ...
 
-    async def get_by_id(self, menu_item_id: UUID) -> Optional[MenuItemReadModel]:
-        ...
+    async def get_by_id(self, menu_item_id: UUID) -> Optional[MenuItemReadModel]: ...

@@ -17,10 +17,7 @@ from src.modules.users.domain.exceptions import (
 )
 from src.shared.application.mediator import Mediator
 
-router = APIRouter(
-    prefix="/users",
-    tags=["Users"]
-)
+router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post(

@@ -87,9 +87,7 @@ def create_customer_request_status_changed_event(
             "changed_at": changed_at.isoformat(),
             "customer_name": customer_name,
             "desired_datetime": (
-                desired_datetime.isoformat()
-                if desired_datetime is not None
-                else None
+                desired_datetime.isoformat() if desired_datetime is not None else None
             ),
             "persons_count": persons_count,
             "comment": comment,

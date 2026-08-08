@@ -1,8 +1,17 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
-from src.modules.customer_requests.infra.repositories import SQLAlchemyCustomerRequestRepository, SQLAlchemyMenuItemSnapshotRepository
-from src.modules.catalog.infra.repositories import SQLAlchemyMenuCategoryRepository, SQLAlchemyMenuItemRepository
-from src.modules.notifications.infra.repositories import SQLAlchemyNotificationDeliveryRepository, SQLAlchemyProcessedKafkaMessageRepository
+from src.modules.customer_requests.infra.repositories import (
+    SQLAlchemyCustomerRequestRepository,
+    SQLAlchemyMenuItemSnapshotRepository,
+)
+from src.modules.catalog.infra.repositories import (
+    SQLAlchemyMenuCategoryRepository,
+    SQLAlchemyMenuItemRepository,
+)
+from src.modules.notifications.infra.repositories import (
+    SQLAlchemyNotificationDeliveryRepository,
+    SQLAlchemyProcessedKafkaMessageRepository,
+)
 from src.shared.outbox.infra.repositories import SQLAlchemyOutboxRepository
 from src.modules.users.infra.repositories import SQLAlchemyUserRepository
 from src.shared.application.unit_of_work import UnitOfWork
@@ -16,15 +25,19 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.session = self._session_factory()
         self.users = SQLAlchemyUserRepository(self.session)
         self.outbox = SQLAlchemyOutboxRepository(self.session)
-        self.notification_deliveries = SQLAlchemyNotificationDeliveryRepository(self.session)
-        self.processed_kafka_messages = SQLAlchemyProcessedKafkaMessageRepository(self.session)
-        
+        self.notification_deliveries = SQLAlchemyNotificationDeliveryRepository(
+            self.session
+        )
+        self.processed_kafka_messages = SQLAlchemyProcessedKafkaMessageRepository(
+            self.session
+        )
+
         self.menu_categories = SQLAlchemyMenuCategoryRepository(self.session)
         self.menu_items = SQLAlchemyMenuItemRepository(self.session)
-        
+
         self.customer_requests = SQLAlchemyCustomerRequestRepository(self.session)
         self.menu_item_snapshots = SQLAlchemyMenuItemSnapshotRepository(self.session)
-        
+
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:

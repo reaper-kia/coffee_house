@@ -1,4 +1,3 @@
-
 # Предполагаем, что фабрика сессий определена в shared/infra/database/session.py
 from src.shared.infra.database.unit_of_work import SQLAlchemyUnitOfWork
 from src.shared.infra.database.session import async_session_maker

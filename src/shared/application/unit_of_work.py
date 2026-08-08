@@ -1,15 +1,26 @@
 from typing import Protocol
 
 
-from src.modules.customer_requests.application.ports.customer_request_repository import CustomerRequestRepository
-from src.modules.customer_requests.application.ports.menu_item_snapshot_repository import MenuItemSnapshotRepository
-from src.modules.catalog.application.ports.menu_category_repository import MenuCategoryRepository
-from src.modules.catalog.application.ports.menu_item_repository import MenuItemRepository
-from src.modules.notifications.application.ports.notification_delivery_repository import NotificationDeliveryRepository
-from src.modules.notifications.application.ports.processed_message_repository import ProcessedKafkaMessageRepository
+from src.modules.customer_requests.application.ports.customer_request_repository import (
+    CustomerRequestRepository,
+)
+from src.modules.customer_requests.application.ports.menu_item_snapshot_repository import (
+    MenuItemSnapshotRepository,
+)
+from src.modules.catalog.application.ports.menu_category_repository import (
+    MenuCategoryRepository,
+)
+from src.modules.catalog.application.ports.menu_item_repository import (
+    MenuItemRepository,
+)
+from src.modules.notifications.application.ports.notification_delivery_repository import (
+    NotificationDeliveryRepository,
+)
+from src.modules.notifications.application.ports.processed_message_repository import (
+    ProcessedKafkaMessageRepository,
+)
 from src.shared.outbox.application.repositories import OutboxRepository
 from src.modules.users.application.ports.user_repository import UserRepository
-
 
 
 class UnitOfWork(Protocol):
@@ -20,23 +31,18 @@ class UnitOfWork(Protocol):
 
     menu_categories: MenuCategoryRepository
     menu_items: MenuItemRepository
-    
+
     customer_requests: CustomerRequestRepository
     menu_item_snapshots: MenuItemSnapshotRepository
-    
-    async def __aenter__(self) -> "UnitOfWork":
-        ...
 
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        ...
+    async def __aenter__(self) -> "UnitOfWork": ...
 
-    async def commit(self):
-        ...
+    async def __aexit__(self, exc_type, exc_value, traceback): ...
 
-    async def rollback(self):
-        ...
+    async def commit(self): ...
+
+    async def rollback(self): ...
 
 
 class UnitOfWorkFactory(Protocol):
-    def __call__(self) -> UnitOfWork:
-        ...
+    def __call__(self) -> UnitOfWork: ...

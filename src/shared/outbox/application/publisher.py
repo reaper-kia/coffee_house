@@ -18,8 +18,7 @@ class KafkaJsonProducer(Protocol):
         topic: str,
         key: str,
         value: Mapping[str, Any],
-    ) -> object:
-        ...
+    ) -> object: ...
 
 
 def calculate_retry_delay_seconds(attempts: int) -> int:

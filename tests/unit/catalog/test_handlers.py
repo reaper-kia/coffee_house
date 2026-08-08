@@ -100,9 +100,7 @@ async def test_create_menu_item_uses_single_transaction() -> None:
 async def test_create_menu_item_allows_missing_description() -> None:
     items = SimpleNamespace(save=AsyncMock())
     uow = FakeUoW(
-        menu_categories=SimpleNamespace(
-            exists_by_id=AsyncMock(return_value=True)
-        ),
+        menu_categories=SimpleNamespace(exists_by_id=AsyncMock(return_value=True)),
         menu_items=items,
     )
     handler = CreateMenuItemHandler(FakeUoWFactory(uow))
@@ -154,9 +152,7 @@ async def test_update_menu_item_updates_position() -> None:
     uow = FakeUoW(menu_items=items, menu_categories=categories)
     handler = UpdateMenuItemHandler(FakeUoWFactory(uow))
 
-    updated = await handler.handle(
-        UpdateMenuItemCommand(item_id=ITEM_ID, position=9)
-    )
+    updated = await handler.handle(UpdateMenuItemCommand(item_id=ITEM_ID, position=9))
 
     assert updated.position.value == 9
     items.save.assert_awaited_once_with(item)
@@ -184,9 +180,7 @@ async def test_change_availability_handler() -> None:
     uow = FakeUoW(menu_items=items)
     handler = ChangeMenuItemAvailabilityHandler(FakeUoWFactory(uow))
 
-    result = await handler.handle(
-        ChangeMenuItemAvailabilityCommand(ITEM_ID, False)
-    )
+    result = await handler.handle(ChangeMenuItemAvailabilityCommand(ITEM_ID, False))
 
     assert result.is_available is False
     items.save.assert_awaited_once_with(item)

@@ -199,9 +199,7 @@ async def test_list_handler_calculates_offset() -> None:
     repo = SimpleNamespace(list=AsyncMock(return_value=page))
     handler = ListCustomerRequestsHandler(repo)
 
-    result = await handler.handle(
-        ListCustomerRequestsQuery(page=3, page_size=20)
-    )
+    result = await handler.handle(ListCustomerRequestsQuery(page=3, page_size=20))
 
     assert result == page
     repo.list.assert_awaited_once_with(

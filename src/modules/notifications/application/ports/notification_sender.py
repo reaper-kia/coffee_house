@@ -7,5 +7,4 @@ class NotificationSender(Protocol):
         *,
         recipient: str,
         message: str,
-    ) -> None:
-        ...
+    ) -> None: ...

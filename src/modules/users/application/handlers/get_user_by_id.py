@@ -8,11 +8,11 @@ from src.modules.users.domain.exceptions import UserNotFoundError
 @dataclass
 class GetUserByIdQueryHandler:
     user_read_repository: UserReadRepository
-    
+
     async def handle(self, query: GetUserByIdQuery):
         result = await self.user_read_repository.get_by_id(query.id)
-        
+
         if result is None:
             raise UserNotFoundError("User not found")
-        
+
         return result

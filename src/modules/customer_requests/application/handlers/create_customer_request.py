@@ -7,7 +7,10 @@ from src.shared.events.customer_request_event import (
 from src.shared.outbox.domain.entities import (
     OutboxMessage,
 )
-from src.modules.customer_requests.domain.entities import CustomerRequest, CustomerRequestItem
+from src.modules.customer_requests.domain.entities import (
+    CustomerRequest,
+    CustomerRequestItem,
+)
 from src.modules.customer_requests.domain.exceptions import MenuItemUnavailable
 from src.modules.customer_requests.application.commands.create_customer_request import (
     CreateCustomerRequestCommand,
@@ -24,38 +27,26 @@ class CreateCustomerRequestHandler:
         command: CreateCustomerRequestCommand,
     ) -> CustomerRequest:
         async with self.uow_factory() as uow:
-            requested_ids = {
-                item.menu_item_id
-                for item in command.items
-            }
+            requested_ids = {item.menu_item_id for item in command.items}
 
-            snapshots = (
-                await uow.menu_item_snapshots.get_available_by_ids(
-                    requested_ids
-                )
+            snapshots = await uow.menu_item_snapshots.get_available_by_ids(
+                requested_ids
             )
 
             missing_ids = requested_ids - snapshots.keys()
 
             if missing_ids:
-                missing = ", ".join(
-                    sorted(map(str, missing_ids))
-                )
+                missing = ", ".join(sorted(map(str, missing_ids)))
 
                 raise MenuItemUnavailable(
-                    "Menu items are unavailable "
-                    f"or do not exist: {missing}"
+                    f"Menu items are unavailable or do not exist: {missing}"
                 )
 
             request_items = [
                 CustomerRequestItem(
                     menu_item_id=item.menu_item_id,
-                    title_snapshot=(
-                        snapshots[item.menu_item_id].title
-                    ),
-                    price_amount_snapshot=(
-                        snapshots[item.menu_item_id].price_amount
-                    ),
+                    title_snapshot=(snapshots[item.menu_item_id].title),
+                    price_amount_snapshot=(snapshots[item.menu_item_id].price_amount),
                     price_currency_snapshot=(
                         snapshots[item.menu_item_id].price_currency
                     ),
@@ -76,18 +67,14 @@ class CreateCustomerRequestHandler:
                 items=request_items,
             )
 
-            await uow.customer_requests.add(
-                customer_request
-            )
-            
+            await uow.customer_requests.add(customer_request)
+
             event = create_customer_request_created_event(
                 request_id=customer_request.id,
                 request_type=customer_request.request_type.value,
                 customer_name=customer_request.customer_name,
                 contact=customer_request.contact,
-                desired_datetime=(
-                    customer_request.desired_datetime
-                ),
+                desired_datetime=(customer_request.desired_datetime),
                 persons_count=customer_request.person_count,
                 comment=customer_request.comment,
                 status=customer_request.status.value,
@@ -96,23 +83,17 @@ class CreateCustomerRequestHandler:
                         "menu_item_id": item.menu_item_id,
                         "title": item.title_snapshot,
                         "quantity": item.quantity,
-                        "price_amount": (
-                            item.price_amount_snapshot
-                        ),
-                        "price_currency": (
-                            item.price_currency_snapshot
-                        ),
+                        "price_amount": (item.price_amount_snapshot),
+                        "price_currency": (item.price_currency_snapshot),
                         "comment": item.comment,
                     }
                     for item in customer_request.items
                 ],
             )
-    
+
             outbox_message = OutboxMessage.from_event(
                 event=event,
-                topic=(
-                    settings.kafka_customer_request_events_topic
-                ),
+                topic=(settings.kafka_customer_request_events_topic),
                 key=str(customer_request.id),
             )
 

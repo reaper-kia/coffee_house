@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 from decimal import Decimal
 
+
 @dataclass
 class CreateMenuItemCommand:
     title: str

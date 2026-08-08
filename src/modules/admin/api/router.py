@@ -67,12 +67,8 @@ async def get_customer_requests(
         ge=1,
         le=100,
     ),
-    mediator: Mediator = Depends(
-        get_customer_requests_mediator
-    ),
-    _current_user: CurrentUser = Depends(
-        require_admin
-    ),
+    mediator: Mediator = Depends(get_customer_requests_mediator),
+    _current_user: CurrentUser = Depends(require_admin),
 ) -> AdminCustomerRequestsPageResponse:
     result = await mediator.send(
         ListCustomerRequestsQuery(
@@ -83,17 +79,10 @@ async def get_customer_requests(
         )
     )
 
-    total_pages = (
-        ceil(result.total / page_size)
-        if result.total
-        else 1
-    )
+    total_pages = ceil(result.total / page_size) if result.total else 1
 
     return AdminCustomerRequestsPageResponse(
-        items=[
-            customer_request_read_model_to_response(item)
-            for item in result.items
-        ],
+        items=[customer_request_read_model_to_response(item) for item in result.items],
         total=result.total,
         page=page,
         page_size=page_size,
@@ -108,19 +97,11 @@ async def get_customer_requests(
 )
 async def get_customer_request_by_id(
     request_id: UUID,
-    mediator: Mediator = Depends(
-        get_customer_requests_mediator
-    ),
-    _current_user: CurrentUser = Depends(
-        require_admin
-    ),
+    mediator: Mediator = Depends(get_customer_requests_mediator),
+    _current_user: CurrentUser = Depends(require_admin),
 ) -> CustomerRequestResponse:
     try:
-        result = await mediator.send(
-            GetCustomerRequestByIdQuery(
-                request_id=request_id
-            )
-        )
+        result = await mediator.send(GetCustomerRequestByIdQuery(request_id=request_id))
 
     except CustomerRequestNotFound as exc:
         raise HTTPException(
@@ -128,9 +109,7 @@ async def get_customer_request_by_id(
             detail=str(exc),
         ) from exc
 
-    return customer_request_read_model_to_response(
-        result
-    )
+    return customer_request_read_model_to_response(result)
 
 
 @router.patch(
@@ -140,15 +119,9 @@ async def get_customer_request_by_id(
 )
 async def patch_customer_request_status(
     request_id: UUID,
-    new_status: CustomerRequestStatus = Query(
-        alias="status"
-    ),
-    mediator: Mediator = Depends(
-        get_customer_requests_mediator
-    ),
-    current_user: CurrentUser = Depends(
-        require_admin
-    ),
+    new_status: CustomerRequestStatus = Query(alias="status"),
+    mediator: Mediator = Depends(get_customer_requests_mediator),
+    current_user: CurrentUser = Depends(require_admin),
 ) -> CustomerRequestResponse:
     command = ChangeCustomerRequestStatusCommand(
         request_id=request_id,
@@ -167,9 +140,7 @@ async def patch_customer_request_status(
 
     except CustomerRequestException as exc:
         raise HTTPException(
-            status_code=(
-                status.HTTP_422_UNPROCESSABLE_ENTITY
-            ),
+            status_code=(status.HTTP_422_UNPROCESSABLE_ENTITY),
             detail=str(exc),
         ) from exc
 

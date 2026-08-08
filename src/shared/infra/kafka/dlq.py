@@ -7,8 +7,9 @@ from src.shared.infra.kafka.consumer import KafkaConsumedMessage
 def create_dlq_key(message: KafkaConsumedMessage):
     if message.key is not None:
         return message.key
-    
+
     return f"{message.topic}:{message.partition}:{message.offset}"
+
 
 def create_dlq_payload(
     *,

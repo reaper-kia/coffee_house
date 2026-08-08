@@ -2,7 +2,16 @@ from uuid import UUID, uuid4
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import String, Boolean, Integer, DateTime, Index, ForeignKey, Numeric, Text
+from sqlalchemy import (
+    String,
+    Boolean,
+    Integer,
+    DateTime,
+    Index,
+    ForeignKey,
+    Numeric,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func

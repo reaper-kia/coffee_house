@@ -12,7 +12,10 @@ from src.modules.auth.application.ports.auth_user_repository import AuthUserRepo
 from src.modules.auth.application.ports.token_service import TokenService
 from src.modules.auth.infra.jwt_token_service import JwtTokenService
 from src.modules.auth.infra.repositories import SQLAlchemyAuthUserRepository
-from src.modules.users.api.dependencies import get_password_hasher, get_user_read_repository
+from src.modules.users.api.dependencies import (
+    get_password_hasher,
+    get_user_read_repository,
+)
 from src.modules.users.application.ports.password_hasher import PasswordHasher
 from src.modules.users.application.ports.user_repository import UserReadRepository
 from src.shared.application.mediator import Mediator
@@ -76,22 +79,24 @@ def get_current_user_id(
             detail="Invalid or expired token",
         ) from exc
 
+
 async def get_current_user(
     id: UUID = Depends(get_current_user_id),
     user_read_repo: UserReadRepository = Depends(get_user_read_repository),
 ) -> CurrentUser:
     user = await user_read_repo.get_by_id(id)
-    
+
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",
         )
-    
+
     return CurrentUser(
         id=user.id,
         is_admin=user.is_admin,
     )
+
 
 async def require_admin(
     current_user: CurrentUser = Depends(get_current_user),

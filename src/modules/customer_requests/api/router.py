@@ -7,7 +7,7 @@ from src.shared.application.mediator import Mediator
 from src.modules.customer_requests.api.schemas import (
     CreateCustomerRequestRequest,
     CustomerRequestResponse,
-    customer_request_to_response,          # маппер для ответа
+    customer_request_to_response,  # маппер для ответа
 )
 from src.modules.customer_requests.application.commands.create_customer_request import (
     CreateCustomerRequestCommand,

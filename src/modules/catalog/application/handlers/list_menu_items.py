@@ -1,7 +1,10 @@
 from typing import List
-from src.modules.catalog.application.ports.menu_read_repositories import MenuItemReadRepository
+from src.modules.catalog.application.ports.menu_read_repositories import (
+    MenuItemReadRepository,
+)
 from src.modules.catalog.application.read_models import MenuItemReadModel
 from ..queries.get_menu_items import GetMenuItemsQuery
+
 
 class ListMenuItemsHandler:
     def __init__(self, read_repo: MenuItemReadRepository):

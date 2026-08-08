@@ -2,8 +2,12 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.modules.users.application.commands.register_user import RegisterUserCommand
-from src.modules.users.application.handlers.get_user_by_id import GetUserByIdQueryHandler
-from src.modules.users.application.handlers.register_user import RegisterUserCommandHandler
+from src.modules.users.application.handlers.get_user_by_id import (
+    GetUserByIdQueryHandler,
+)
+from src.modules.users.application.handlers.register_user import (
+    RegisterUserCommandHandler,
+)
 from src.modules.users.application.ports.password_hasher import PasswordHasher
 from src.modules.users.application.ports.user_repository import (
     UserReadRepository,
@@ -54,13 +58,10 @@ def get_user_by_id_handler(
         user_read_repository=user_read_repository,
     )
 
+
 def get_mediator(
-    register_handler: RegisterUserCommandHandler = Depends(
-        get_register_user_handler
-    ),
-    user_by_id_handler: GetUserByIdQueryHandler = Depends(
-        get_user_by_id_handler
-    ),
+    register_handler: RegisterUserCommandHandler = Depends(get_register_user_handler),
+    user_by_id_handler: GetUserByIdQueryHandler = Depends(get_user_by_id_handler),
 ) -> Mediator:
     mediator = Mediator()
 

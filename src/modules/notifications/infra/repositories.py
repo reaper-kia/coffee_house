@@ -4,34 +4,45 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-from src.modules.notifications.application.ports.notification_delivery_repository import NotificationDeliveryRepository
-from src.modules.notifications.application.ports.processed_message_repository import ProcessedKafkaMessageRepository
+from src.modules.notifications.application.ports.notification_delivery_repository import (
+    NotificationDeliveryRepository,
+)
+from src.modules.notifications.application.ports.processed_message_repository import (
+    ProcessedKafkaMessageRepository,
+)
 from src.modules.notifications.domain.delivery import NotificationDelivery
-from src.modules.notifications.domain.enums import NotificationChannel, NotificationDeliveryStatus
+from src.modules.notifications.domain.enums import (
+    NotificationChannel,
+    NotificationDeliveryStatus,
+)
 from src.modules.notifications.domain.processed_message import ProcessedKafkaMessage
-from src.modules.notifications.infra.models import NotificationDeliveryModel, ProcessedKafkaMessageModel
+from src.modules.notifications.infra.models import (
+    NotificationDeliveryModel,
+    ProcessedKafkaMessageModel,
+)
 from src.modules.notifications.domain.exceptions import NotificationNotFoundError
-
 
 
 class SQLAlchemyNotificationDeliveryRepository(NotificationDeliveryRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
-    
+
     async def add(self, notification: NotificationDelivery) -> NotificationDelivery:
         self.session.add(self._to_model(notification))
-        
+
         return notification
-        
+
     async def save(self, notification: NotificationDelivery) -> None:
         model = await self.session.get(NotificationDeliveryModel, notification.id)
-        
+
         if model is None:
             raise NotificationNotFoundError("Notification not found.")
-        
+
         self._apply_entity_to_model(notification, model)
-    
-    async def get_by_event_channel_recipient(self, *, event_id: UUID, channel: NotificationChannel, recipient: str) -> NotificationDelivery | None:
+
+    async def get_by_event_channel_recipient(
+        self, *, event_id: UUID, channel: NotificationChannel, recipient: str
+    ) -> NotificationDelivery | None:
         stmt = select(NotificationDeliveryModel).where(
             NotificationDeliveryModel.event_id == event_id,
             NotificationDeliveryModel.channel == channel.value,
@@ -39,15 +50,11 @@ class SQLAlchemyNotificationDeliveryRepository(NotificationDeliveryRepository):
         )
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             return None
         return self._to_entity(model)
-        
-        
 
-
-    
     @staticmethod
     def _to_model(delivery: NotificationDelivery) -> NotificationDeliveryModel:
         return NotificationDeliveryModel(
@@ -98,23 +105,24 @@ class SQLAlchemyNotificationDeliveryRepository(NotificationDeliveryRepository):
         model.sent_at = delivery.sent_at
         model.created_at = delivery.created_at
         model.updated_at = delivery.updated_at
-    
+
+
 class SQLAlchemyProcessedKafkaMessageRepository(ProcessedKafkaMessageRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
-        
+
     async def add(self, message: ProcessedKafkaMessage) -> ProcessedKafkaMessage:
         self.session.add(self._to_model(message))
-        
+
         return message
 
     async def exists(self, event_id: UUID) -> bool:
-        stmt = select(ProcessedKafkaMessageModel).where(ProcessedKafkaMessageModel.event_id == event_id)
+        stmt = select(ProcessedKafkaMessageModel).where(
+            ProcessedKafkaMessageModel.event_id == event_id
+        )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
-        
-        
-    
+
     @staticmethod
     def _to_model(message: ProcessedKafkaMessage) -> ProcessedKafkaMessageModel:
         return ProcessedKafkaMessageModel(

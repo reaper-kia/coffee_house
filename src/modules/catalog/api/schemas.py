@@ -35,6 +35,7 @@ class MenuItemResponse(BaseModel):
 # Запросы (для админских эндпоинтов)
 # ============================================
 
+
 class CreateCategoryRequest(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     position: int = Field(0, ge=0)
@@ -72,14 +73,14 @@ class UpdateMenuItemRequest(BaseModel):
     def validate_price_pair(self) -> "UpdateMenuItemRequest":
         amount_is_set = self.price_amount is not None
         currency_is_set = self.price_currency is not None
-    
+
         if amount_is_set != currency_is_set:
             raise ValueError(
-                "price_amount and price_currency "
-                "must be provided together"
+                "price_amount and price_currency must be provided together"
             )
-    
+
         return self
+
 
 class ChangeAvailabilityRequest(BaseModel):
     is_available: bool
@@ -89,8 +90,8 @@ def category_to_response(category: "MenuCategory") -> CategoryResponse:
     """Преобразует доменную сущность Category в Pydantic-схему."""
     return CategoryResponse(
         id=category.id,
-        title=category.title.value,          # Извлекаем примитив из VO
-        position=category.position.value,    # Извлекаем примитив из VO
+        title=category.title.value,  # Извлекаем примитив из VO
+        position=category.position.value,  # Извлекаем примитив из VO
         is_active=category.is_active,
     )
 
@@ -101,15 +102,16 @@ def menu_item_to_response(item: "MenuItem") -> MenuItemResponse:
         id=item.id,
         category_id=item.category_id,
         category_title=None,  # Заполняется из read-модели, если есть
-        title=item.title.value,               # Из VO
-        description=item.description.value,   # Из VO
-        price_amount=item.price.amount,       # Из VO Money
-        price_currency=item.price.currency,   # Из VO Money
+        title=item.title.value,  # Из VO
+        description=item.description.value,  # Из VO
+        price_amount=item.price.amount,  # Из VO Money
+        price_currency=item.price.currency,  # Из VO Money
         image_url=item.image_url,
         is_available=item.is_available,
-        position=item.position.value,         # Из VO Position
+        position=item.position.value,  # Из VO Position
     )
-    
+
+
 def menu_item_read_model_to_response(
     item: MenuItemReadModel,
 ) -> MenuItemResponse:

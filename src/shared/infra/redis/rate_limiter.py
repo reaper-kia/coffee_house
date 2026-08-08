@@ -7,7 +7,7 @@ class RateLimitResult:
     allowed: bool
     attempts: int
     limit: int
-    degraded: bool = False          # <-- перемещено вперёд, добавлено значение по умолчанию
+    degraded: bool = False  # <-- перемещено вперёд, добавлено значение по умолчанию
     retry_after_seconds: int | None = None
 
 

@@ -2,6 +2,7 @@ from typing import Protocol, Optional
 from uuid import UUID
 from src.modules.catalog.domain.entities import MenuCategory
 
+
 class MenuCategoryRepository(Protocol):
     async def save(self, category: MenuCategory) -> None: ...
     async def get_by_id(self, category_id: UUID) -> Optional[MenuCategory]: ...

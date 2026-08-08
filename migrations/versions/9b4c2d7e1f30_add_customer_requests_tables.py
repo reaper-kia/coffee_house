@@ -78,10 +78,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.CheckConstraint(
-            (
-                "person_count IS NULL "
-                "OR person_count BETWEEN 1 AND 500"
-            ),
+            ("person_count IS NULL OR person_count BETWEEN 1 AND 500"),
             name="ck_customer_requests_person_count",
         ),
         sa.PrimaryKeyConstraint("id"),
@@ -155,15 +152,11 @@ def upgrade() -> None:
         ),
         sa.CheckConstraint(
             "quantity BETWEEN 1 AND 100",
-            name=(
-                "ck_customer_request_items_quantity"
-            ),
+            name=("ck_customer_request_items_quantity"),
         ),
         sa.CheckConstraint(
             "price_amount_snapshot > 0",
-            name=(
-                "ck_customer_request_items_price_positive"
-            ),
+            name=("ck_customer_request_items_price_positive"),
         ),
         sa.ForeignKeyConstraint(
             ["customer_request_id"],
@@ -179,10 +172,7 @@ def upgrade() -> None:
     )
 
     op.create_index(
-        (
-            "ix_customer_request_items_"
-            "customer_request_id"
-        ),
+        ("ix_customer_request_items_customer_request_id"),
         "customer_request_items",
         ["customer_request_id"],
         unique=False,
@@ -203,16 +193,11 @@ def downgrade() -> None:
     )
 
     op.drop_index(
-        (
-            "ix_customer_request_items_"
-            "customer_request_id"
-        ),
+        ("ix_customer_request_items_customer_request_id"),
         table_name="customer_request_items",
     )
 
-    op.drop_table(
-        "customer_request_items"
-    )
+    op.drop_table("customer_request_items")
 
     op.drop_index(
         "ix_customer_requests_desired_datetime",
@@ -229,6 +214,4 @@ def downgrade() -> None:
         table_name="customer_requests",
     )
 
-    op.drop_table(
-        "customer_requests"
-    )
+    op.drop_table("customer_requests")

@@ -7,11 +7,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.modules.customer_requests.domain.exceptions import CustomerRequestNotFound
-from src.modules.customer_requests.application.ports.customer_request_read_repository import CustomerRequestReadRepository
-from src.modules.customer_requests.application.ports.customer_request_repository import CustomerRequestRepository
-from src.modules.customer_requests.application.ports.menu_item_snapshot_repository import MenuItemSnapshotRepository, ProductSnapshot
-from src.modules.customer_requests.domain.entities import CustomerRequest, CustomerRequestItem
-from src.modules.customer_requests.domain.enums import CustomerRequestStatus, CustomerRequestType
+from src.modules.customer_requests.application.ports.customer_request_read_repository import (
+    CustomerRequestReadRepository,
+)
+from src.modules.customer_requests.application.ports.customer_request_repository import (
+    CustomerRequestRepository,
+)
+from src.modules.customer_requests.application.ports.menu_item_snapshot_repository import (
+    MenuItemSnapshotRepository,
+    ProductSnapshot,
+)
+from src.modules.customer_requests.domain.entities import (
+    CustomerRequest,
+    CustomerRequestItem,
+)
+from src.modules.customer_requests.domain.enums import (
+    CustomerRequestStatus,
+    CustomerRequestType,
+)
 from src.modules.customer_requests.application.read_models import (
     CustomerRequestReadModel,
     CustomerRequestItemReadModel,
@@ -59,21 +72,15 @@ class SQLAlchemyCustomerRequestRepository(CustomerRequestRepository):
             CustomerRequestModel,
             request.id,
         )
-    
+
         if model is None:
-            raise CustomerRequestNotFound(
-                f"Customer request {request.id} not found"
-            )
-    
+            raise CustomerRequestNotFound(f"Customer request {request.id} not found")
+
         model.request_type = request.request_type.value
         model.customer_name = request.customer_name
         model.contact = request.contact
-        model.telegram_chat_id = (
-            request.telegram_chat_id
-        )
-        model.desired_datetime = (
-            request.desired_datetime
-        )
+        model.telegram_chat_id = request.telegram_chat_id
+        model.desired_datetime = request.desired_datetime
         model.person_count = request.person_count
         model.comment = request.comment
         model.status = request.status.value
@@ -182,11 +189,12 @@ class SQLAlchemyCustomerRequestReadRepository(CustomerRequestReadRepository):
 
         # 4. Загружаем данные с пагинацией и сортировкой
         query = (
-            query
-            .order_by(CustomerRequestModel.created_at.desc())
+            query.order_by(CustomerRequestModel.created_at.desc())
             .limit(limit)
             .offset(offset)
-            .options(selectinload(CustomerRequestModel.items))  # ← Загружаем items для каждой заявки
+            .options(
+                selectinload(CustomerRequestModel.items)
+            )  # ← Загружаем items для каждой заявки
         )
         result = await self.session.execute(query)
         models = result.scalars().all()
@@ -232,7 +240,9 @@ class SQLAlchemyMenuItemSnapshotRepository(MenuItemSnapshotRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_available_by_ids(self, menu_item_ids: set[UUID]) -> dict[UUID, ProductSnapshot]:
+    async def get_available_by_ids(
+        self, menu_item_ids: set[UUID]
+    ) -> dict[UUID, ProductSnapshot]:
         """
         Получить снапшоты для списка ID товаров.
         Возвращает словарь {menu_item_id: ProductSnapshot}.

@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from pydantic import EmailStr 
+from pydantic import EmailStr
+
 
 @dataclass(frozen=True)
 class AuthUserReadModel:

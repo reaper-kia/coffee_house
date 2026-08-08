@@ -4,7 +4,9 @@ from uuid import UUID
 from typing import Optional, List
 
 from src.shared.domain.exceptions import SharedDomainError
-from src.modules.catalog.application.commands.change_menu_item_availability import ChangeMenuItemAvailabilityCommand
+from src.modules.catalog.application.commands.change_menu_item_availability import (
+    ChangeMenuItemAvailabilityCommand,
+)
 from src.shared.application.mediator import Mediator
 from src.modules.auth.api.dependencies import require_admin
 
@@ -22,10 +24,18 @@ from src.modules.catalog.api.schemas import (
 from src.modules.catalog.application.queries.get_categories import GetCategoriesQuery
 from src.modules.catalog.application.queries.get_menu_items import GetMenuItemsQuery
 from src.modules.catalog.application.queries.get_menu_item import GetMenuItemQuery
-from src.modules.catalog.application.commands.create_menu_category import CreateMenuCategoryCommand
-from src.modules.catalog.application.commands.update_menu_category import UpdateMenuCategoryCommand
-from src.modules.catalog.application.commands.create_menu_item import CreateMenuItemCommand
-from src.modules.catalog.application.commands.update_menu_item import UpdateMenuItemCommand
+from src.modules.catalog.application.commands.create_menu_category import (
+    CreateMenuCategoryCommand,
+)
+from src.modules.catalog.application.commands.update_menu_category import (
+    UpdateMenuCategoryCommand,
+)
+from src.modules.catalog.application.commands.create_menu_item import (
+    CreateMenuItemCommand,
+)
+from src.modules.catalog.application.commands.update_menu_item import (
+    UpdateMenuItemCommand,
+)
 from src.modules.catalog.domain.exceptions import (
     CatalogDomainError,
     CategoryNotFoundError,
@@ -41,6 +51,7 @@ router = APIRouter(prefix="/catalog", tags=["Catalog"])
 # ============================================
 # Публичные эндпоинты (без авторизации)
 # ============================================
+
 
 @router.get("/categories", response_model=List[CategoryResponse])
 async def get_categories(
@@ -96,7 +107,9 @@ admin_router = APIRouter(
 )
 
 
-@admin_router.post("/categories", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
+@admin_router.post(
+    "/categories", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_category(
     data: CreateCategoryRequest,
     mediator: Mediator = Depends(get_catalog_mediator),
@@ -108,25 +121,26 @@ async def create_category(
     )
     try:
         category = await mediator.send(cmd)
-    
+
     except CategoryNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         ) from exc
-    
+
     except (CatalogDomainError, SharedDomainError) as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=str(exc),
         ) from exc
-    
+
     return CategoryResponse(
         id=category.id,
         title=category.title.value,
         is_active=category.is_active,
         position=category.position.value,
     )
+
 
 @admin_router.patch("/categories/{category_id}", response_model=CategoryResponse)
 async def update_category(
@@ -154,7 +168,7 @@ async def update_category(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=str(exc),
         ) from exc
-    
+
     return CategoryResponse(
         id=category.id,
         title=category.title.value,
@@ -163,7 +177,9 @@ async def update_category(
     )
 
 
-@admin_router.post("/menu-items", response_model=MenuItemResponse, status_code=status.HTTP_201_CREATED)
+@admin_router.post(
+    "/menu-items", response_model=MenuItemResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_menu_item(
     data: CreateMenuItemRequest,
     mediator: Mediator = Depends(get_catalog_mediator),
@@ -193,6 +209,7 @@ async def create_menu_item(
             detail=str(exc),
         ) from exc
     return menu_item_to_response(item)
+
 
 @admin_router.patch("/menu-items/{item_id}", response_model=MenuItemResponse)
 async def update_menu_item(
@@ -227,16 +244,20 @@ async def update_menu_item(
         ) from exc
     return menu_item_to_response(item)
 
-@admin_router.patch("/menu-items/{item_id}/availability", response_model=MenuItemResponse)
+
+@admin_router.patch(
+    "/menu-items/{item_id}/availability", response_model=MenuItemResponse
+)
 async def change_availability(
     item_id: UUID,
     data: ChangeAvailabilityRequest,
     mediator: Mediator = Depends(get_catalog_mediator),
 ):
-    cmd = ChangeMenuItemAvailabilityCommand(item_id=item_id, is_available=data.is_available)
+    cmd = ChangeMenuItemAvailabilityCommand(
+        item_id=item_id, is_available=data.is_available
+    )
     try:
         item = await mediator.send(cmd)
     except MenuItemNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return menu_item_to_response(item)
-

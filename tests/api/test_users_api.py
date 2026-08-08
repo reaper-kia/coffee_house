@@ -1,11 +1,13 @@
-
 import pytest
 
 from src.modules.auth.api.dependencies import get_current_user_id
 from src.modules.users.api.dependencies import get_mediator
 from src.modules.auth.api.rate_limit import limit_register_request
 from src.modules.users.domain.entities import User
-from src.modules.users.domain.exceptions import EmailAlreadyExistError, UserNotFoundError
+from src.modules.users.domain.exceptions import (
+    EmailAlreadyExistError,
+    UserNotFoundError,
+)
 from src.modules.users.domain.value_objects import Email, UserName
 from tests.factories import USER_ID, user_read_model
 from tests.fakes import StubMediator

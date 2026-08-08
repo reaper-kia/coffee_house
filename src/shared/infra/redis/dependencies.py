@@ -2,8 +2,10 @@ from redis.asyncio import Redis
 
 from src.shared.infra.redis.client import redis_client
 
+
 def get_redis_client() -> Redis:
     return redis_client
+
 
 # def get_redis_cache(
 #     redis: Redis = Depends(get_redis_client)

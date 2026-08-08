@@ -6,8 +6,7 @@ from src.modules.notifications.domain.enums import NotificationChannel
 
 
 class NotificationDeliveryRepository(Protocol):
-    async def add(self, delivery: NotificationDelivery) -> NotificationDelivery:
-        ...
+    async def add(self, delivery: NotificationDelivery) -> NotificationDelivery: ...
 
     async def get_by_event_channel_recipient(
         self,
@@ -15,8 +14,6 @@ class NotificationDeliveryRepository(Protocol):
         event_id: UUID,
         channel: NotificationChannel,
         recipient: str,
-    ) -> NotificationDelivery | None:
-        ...
+    ) -> NotificationDelivery | None: ...
 
-    async def save(self, delivery: NotificationDelivery) -> None:
-        ...
+    async def save(self, delivery: NotificationDelivery) -> None: ...

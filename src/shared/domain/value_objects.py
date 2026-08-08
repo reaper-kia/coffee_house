@@ -4,9 +4,8 @@ from decimal import Decimal
 from src.shared.domain.exceptions import InvalidCurrencyError, NegativeAmountError
 
 
-
-
 ALLOWED_CURRENCIES = {"USD", "EUR"}
+
 
 @dataclass(frozen=True)
 class Money:

@@ -4,6 +4,7 @@ from src.modules.catalog.domain.exceptions import CategoryNotFoundError
 from src.shared.application.unit_of_work import UnitOfWorkFactory
 from ..commands.update_menu_category import UpdateMenuCategoryCommand
 
+
 class UpdateMenuCategoryHandler:
     def __init__(self, uow_factory: UnitOfWorkFactory):
         self.uow_factory = uow_factory

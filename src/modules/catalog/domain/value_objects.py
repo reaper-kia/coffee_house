@@ -39,22 +39,17 @@ class Description:
     value: str | None
 
     def __post_init__(self) -> None:
-        normalized = (
-            self.value.strip()
-            if self.value is not None
-            else ""
-        )
+        normalized = self.value.strip() if self.value is not None else ""
 
         if len(normalized) > 2000:
-            raise InvalidProductDescriptionError(
-                "Description is too long"
-            )
+            raise InvalidProductDescriptionError("Description is too long")
 
         object.__setattr__(
             self,
             "value",
             normalized,
         )
+
 
 @dataclass(frozen=True)
 class Position:

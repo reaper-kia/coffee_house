@@ -9,6 +9,7 @@ class RegisterUserRequest(BaseModel):
     password: str = Field(min_length=8, max_length=128)
     admin_code: str | None = None
 
+
 class UserResponse(BaseModel):
     id: UUID
     name: str

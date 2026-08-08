@@ -5,8 +5,12 @@ from uuid import UUID
 import pytest
 
 from src.modules.users.application.commands.register_user import RegisterUserCommand
-from src.modules.users.application.handlers.get_user_by_id import GetUserByIdQueryHandler
-from src.modules.users.application.handlers.register_user import RegisterUserCommandHandler
+from src.modules.users.application.handlers.get_user_by_id import (
+    GetUserByIdQueryHandler,
+)
+from src.modules.users.application.handlers.register_user import (
+    RegisterUserCommandHandler,
+)
 from src.modules.users.application.queries.get_user_by_id import GetUserByIdQuery
 from src.modules.users.application.read_models import UserReadModel
 from src.modules.users.domain.entities import User

@@ -28,11 +28,11 @@ class KafkaEventConsumer:
         init=False,
         repr=False,
     )
-    
+
     async def start(self) -> None:
         if self._consumer is not None:
             return
-        
+
         self._consumer = AIOKafkaConsumer(
             self.topic,
             bootstrap_servers=self.bootstrap_servers,
@@ -43,23 +43,23 @@ class KafkaEventConsumer:
             auto_offset_reset=self.auto_offset_reset,
             enable_auto_commit=self.enable_auto_commit,
         )
-        
+
         await self._consumer.start()
-    
+
     async def stop(self) -> None:
         if self._consumer is None:
-            return 
-        
+            return
+
         await self._consumer.stop()
-        
+
         self._consumer = None
-    
+
     async def get_one(self) -> KafkaConsumedMessage:
         if self._consumer is None:
             raise RuntimeError("Kafka consumer is stopped")
-        
+
         record = await self._consumer.getone()
-        
+
         return KafkaConsumedMessage(
             topic=record.topic,
             partition=record.partition,
@@ -67,9 +67,9 @@ class KafkaEventConsumer:
             key=record.key,
             value=record.value,
         )
-    
+
     async def commit(self) -> None:
         if self._consumer is None:
             raise RuntimeError("Kafka consumer is stopped")
-        
+
         await self._consumer.commit()

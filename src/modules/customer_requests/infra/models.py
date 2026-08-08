@@ -2,11 +2,21 @@ from datetime import datetime, UTC
 from decimal import Decimal
 from uuid import UUID, uuid4
 
-from sqlalchemy import CheckConstraint, String, Integer, Numeric, DateTime, ForeignKey, Text, Index
+from sqlalchemy import (
+    CheckConstraint,
+    String,
+    Integer,
+    Numeric,
+    DateTime,
+    ForeignKey,
+    Text,
+    Index,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.shared.infra.database.base import Base
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+
 
 class CustomerRequestModel(Base):
     __tablename__ = "customer_requests"
@@ -55,10 +65,7 @@ class CustomerRequestModel(Base):
 
     __table_args__ = (
         CheckConstraint(
-            (
-                "person_count IS NULL "
-                "OR person_count BETWEEN 1 AND 500"
-            ),
+            ("person_count IS NULL OR person_count BETWEEN 1 AND 500"),
             name="ck_customer_requests_person_count",
         ),
         Index(
@@ -106,7 +113,7 @@ class CustomerRequestItemModel(Base):
     customer_request: Mapped["CustomerRequestModel"] = relationship(
         back_populates="items",
     )
-    
+
     __table_args__ = (
         CheckConstraint(
             "quantity BETWEEN 1 AND 100",
@@ -114,8 +121,6 @@ class CustomerRequestItemModel(Base):
         ),
         CheckConstraint(
             "price_amount_snapshot > 0",
-            name=(
-                "ck_customer_request_items_price_positive"
-            ),
+            name=("ck_customer_request_items_price_positive"),
         ),
     )

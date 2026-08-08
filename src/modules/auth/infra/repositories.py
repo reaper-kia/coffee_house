@@ -11,15 +11,17 @@ from src.modules.users.infra.models import UserModel
 class SQLAlchemyAuthUserRepository(AuthUserRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
-        
+
     async def get_by_email(self, email: str) -> AuthUserReadModel | None:
-        stmt = select(UserModel.email, UserModel.id, UserModel.password_hash).where(UserModel.email == email)
+        stmt = select(UserModel.email, UserModel.id, UserModel.password_hash).where(
+            UserModel.email == email
+        )
         result = await self.session.execute(stmt)
         row = result.one_or_none()
-        
+
         if row is None:
             return None
-        
+
         return AuthUserReadModel(
             id=row.id,
             email=row.email,

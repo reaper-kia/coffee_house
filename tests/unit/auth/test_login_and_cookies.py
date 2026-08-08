@@ -51,9 +51,7 @@ async def test_login_handler_normalizes_email_and_returns_token() -> None:
     repo = AuthRepository(user)
     handler = LoginUserCommandHandler(repo, Hasher(True), TokenService())
 
-    token = await handler.handle(
-        LoginUserCommand(" USER@example.com ", "password123")
-    )
+    token = await handler.handle(LoginUserCommand(" USER@example.com ", "password123"))
 
     assert repo.requested_email == "user@example.com"
     assert token == f"token:{USER_ID}"
@@ -76,9 +74,7 @@ async def test_login_handler_rejects_invalid_credentials(
     )
 
     with pytest.raises(InvalidCredentialError):
-        await handler.handle(
-            LoginUserCommand("user@example.com", "bad-password")
-        )
+        await handler.handle(LoginUserCommand("user@example.com", "bad-password"))
 
 
 @pytest.mark.unit

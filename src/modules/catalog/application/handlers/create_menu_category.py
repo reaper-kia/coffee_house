@@ -3,6 +3,7 @@ from src.modules.catalog.domain.value_objects import CategoryTitle, Position
 from src.shared.application.unit_of_work import UnitOfWorkFactory
 from ..commands.create_menu_category import CreateMenuCategoryCommand
 
+
 class CreateMenuCategoryHandler:
     def __init__(self, uow_factory: UnitOfWorkFactory):
         self.uow_factory = uow_factory
