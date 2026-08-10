@@ -38,8 +38,8 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    app.add_middleware(
-        CORSMiddleware,
+    app.add_middleware(  # type: ignore[call-arg]
+        CORSMiddleware,  # type: ignore[arg-type]
         allow_origins=[
             "http://localhost:5173",
             "http://127.0.0.1:5173",

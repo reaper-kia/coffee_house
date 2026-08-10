@@ -186,6 +186,7 @@ class SQLAlchemyCustomerRequestReadRepository(CustomerRequestReadRepository):
         # 3. Считаем общее количество (для пагинации)
         count_query = select(func.count()).select_from(query.subquery())
         total = await self.session.scalar(count_query)
+        assert total is not None
 
         # 4. Загружаем данные с пагинацией и сортировкой
         query = (

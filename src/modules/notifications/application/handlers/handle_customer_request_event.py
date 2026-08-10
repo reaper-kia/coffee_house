@@ -82,31 +82,33 @@ class HandleCustomerRequestEventHandler:
             )
         except Exception as exc:
             async with self.uow_factory() as uow:
-                delivery = (
+                failed_delivery = (
                     await uow.notification_deliveries.get_by_event_channel_recipient(
                         event_id=event_id,
                         channel=NotificationChannel.TELEGRAM,
                         recipient=recipient,
                     )
                 )
-                if delivery is not None:
-                    delivery.mark_failed(error=str(exc))
-                    await uow.notification_deliveries.save(delivery)
+                if failed_delivery is not None:
+                    failed_delivery.mark_failed(error=str(exc))
+                    await uow.notification_deliveries.save(failed_delivery)
 
                 await uow.commit()
 
             raise
 
         async with self.uow_factory() as uow:
-            delivery = await uow.notification_deliveries.get_by_event_channel_recipient(
-                event_id=event_id,
-                channel=NotificationChannel.TELEGRAM,
-                recipient=recipient,
+            sent_delivery = (
+                await uow.notification_deliveries.get_by_event_channel_recipient(
+                    event_id=event_id,
+                    channel=NotificationChannel.TELEGRAM,
+                    recipient=recipient,
+                )
             )
 
-            if delivery is not None:
-                delivery.mark_sent()
-                await uow.notification_deliveries.save(delivery)
+            if sent_delivery is not None:
+                sent_delivery.mark_sent()
+                await uow.notification_deliveries.save(sent_delivery)
 
             processed_message = ProcessedKafkaMessage(
                 event_id=event_id,

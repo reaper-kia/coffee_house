@@ -12,6 +12,7 @@ __pycache__/
 venv/
 env/
 myenv/
+ci-venv/
 
 # Environment variables
 .env

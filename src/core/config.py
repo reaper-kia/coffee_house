@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Literal
 
 
 class Settings(BaseSettings):
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
     auth_access_cookie_name: str = "access_token"
     auth_cookie_httponly: bool = True
     auth_cookie_secure: bool = False
-    auth_cookie_samesite: str = "lax"
+    auth_cookie_samesite: Literal["lax", "strict", "none"] = "lax"
     auth_cookie_path: str = "/"
 
     admin_registration_code: str
@@ -66,4 +67,4 @@ class Settings(BaseSettings):
     )
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg]

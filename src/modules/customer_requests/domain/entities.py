@@ -128,7 +128,10 @@ class CustomerRequest:
 
     def change_status(self, new_status: CustomerRequestStatus) -> None:
         # Разрешённые переходы
-        allowed = {
+        allowed: dict[
+            CustomerRequestStatus,
+            set[CustomerRequestStatus],
+        ] = {
             CustomerRequestStatus.NEW: {
                 CustomerRequestStatus.CONFIRMED,
                 CustomerRequestStatus.CANCELLED,

@@ -18,3 +18,5 @@ jobs:
         run: ruff check .
       - name: ruff format
         run: ruff format --check .
+      - name: Mypy
+        run: mypy --explicit-package-bases --ignore-missing-imports src

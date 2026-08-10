@@ -15,6 +15,7 @@ rsync -av ./ "$TMP_DIR" \
   --exclude "myenv" \
   --exclude "venv" \
   --exclude ".venv" \
+  --exclude "ci-venv" \
   --exclude "__pycache__" \
   --exclude "*.pyc" \
   --exclude ".pytest_cache" \
