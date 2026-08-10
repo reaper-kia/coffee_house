@@ -20,3 +20,6 @@ jobs:
         run: ruff format --check .
       - name: Mypy
         run: mypy --explicit-package-bases --ignore-missing-imports src
+      
+      - name: tests
+        run: pytest
