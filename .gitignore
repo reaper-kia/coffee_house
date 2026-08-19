@@ -56,3 +56,5 @@ dist/
 /certs/*.crt
 # Project generated files
 project-tree.txt
+
+infra/ansible/files/tls/localhost.key

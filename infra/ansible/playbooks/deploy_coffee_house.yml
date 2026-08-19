@@ -1,0 +1,86 @@
+---
+- name: Deploy Coffee House
+  hosts: coffee_house
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.apt:
+        name:
+          - git
+          - curl
+          - ca-certificates
+        state: present
+        update_cache: true
+    
+    - name: Add Docker repository
+      ansible.builtin.deb822_repository:
+        name: docker
+        types: deb
+        uris: https://download.docker.com/linux/ubuntu
+        suites: "{{ ansible_distribution_release }}"
+        components: stable
+        architectures: amd64
+        signed_by: https://download.docker.com/linux/ubuntu/gpg
+        install_python_debian: true
+      register: docker_repo
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+      when: docker_repo.changed
+    
+    - name: Install Docker
+      ansible.builtin.apt:
+        name: 
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+          - docker-buildx-plugin
+        state: present
+    
+    - name: Ensure Docker service is running
+      ansible.builtin.systemd_service:
+        name: docker
+        state: started
+        enabled: true
+    
+    - name: Add reaper to docker group
+      ansible.builtin.user:
+        name: reaper
+        groups: docker
+        append: true
+    
+    - name: Clone Coffee House repository
+      ansible.builtin.git:
+        repo: "{{ coffee_house_repo }}"
+        dest: "{{ deploy_dir }}"
+        version: "{{ coffee_house_version }}"
+        update: true
+      become: false
+    
+    - name: Ensure TLS directory exists
+      ansible.builtin.file:
+        path: "{{ deploy_dir }}/certs"
+        state: directory
+        owner: "{{ deploy_user}}"
+        group: "{{ deploy_user}}"
+        mode: '0755'
+    
+    - name: Copy TLS certificate
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../files/tls/localhost.crt"
+        dest: "{{ deploy_dir }}/certs/localhost.crt"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Copy TLS private key
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../files/tls/localhost.key"
+        dest: "{{ deploy_dir }}/certs/localhost.key"
+        owner: root
+        group: root
+        mode: "0600"

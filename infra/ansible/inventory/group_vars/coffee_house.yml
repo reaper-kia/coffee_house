@@ -1,0 +1,19 @@
+---
+deploy_user: reaper
+deploy_dir: /home/reaper/coffee_house
+
+coffee_house_repo: https://github.com/reaper-kia/coffee_house.git
+coffee_house_version: main
+
+app_name: coffee_house
+app_env: local
+
+
+postgres_host: db
+postgres_port: 5432
+postgres_db: coffee_house
+postgres_user: coffee_house
+
+redis_host: redis
+redis_port: 6379
+redis_db: 0
