@@ -58,3 +58,4 @@ dist/
 project-tree.txt
 
 infra/ansible/files/tls/localhost.key
+infra/ansible/inventory/group_vars/coffee_house/secrets.yml
