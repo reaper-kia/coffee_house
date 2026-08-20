@@ -84,3 +84,33 @@
         owner: root
         group: root
         mode: "0600"
+    
+    - name: Validate Coffee House secrets
+      ansible.builtin.assert:
+        that:
+          - postgres_password is defined
+          - jwt_secret_key is defined
+          - admin_registration_code is defined
+        fail_msg: "Required Coffee House secrets are missing"
+
+    - name: Render production environment
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/../templates/coffee_house.env.j2"
+        dest: "{{ deploy_dir }}/.env.prod"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0600"
+    
+    - name: Stop loacal Coffee House stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ deploy_dir }}"
+        files: docker-compose.yml
+        state: absent
+
+    - name: Start Coffee House production stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ deploy_dir }}"
+        files: compose.prod.yml
+        state: present
+        build: always
+        wait: true
